@@ -1,0 +1,16 @@
+{
+  "name": "rim",
+  "version": "1.0.0",
+  "description": "a template engine",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "nodemon src/main.js",
+    "server": "webpack-dev-server --web-content src"
+  },
+  "author": "Nir Kogman",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}
