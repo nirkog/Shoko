@@ -4,6 +4,7 @@ const Data = require('./data.js');
 const Attr = require('./attr.js');
 const Constants = require('./constants.js');
 const Strings = require('./Strings.js');
+const Expressions = require('./Expressions.js');
 
 function getFile(path) {
     return new Promise((resolve, reject) => {
@@ -33,21 +34,9 @@ function parse(path, options) {
                 let char = data[i];
 
                 if(char == Constants.expressionOpeningChar) {
-                    chain.push(expression);
-
-                    if(selfClosingElements.indexOf(expression) >= 0) {
-                        parsedHTML += `<${expression}${attr} />\n`
-                    } else {
-                        parsedHTML += `<${expression}${attr}>\n`;
-                    }
-                    attr = '';
-                    expression = '';
+                    parsedHTML += Expressions.handleOpeningChar();
                 } else if(char == Constants.expressionClosingChar) {
-                    if(selfClosingElements.indexOf(chain[chain.length - 1]) >= 0) {
-                        chain.pop();
-                    } else {
-                        parsedHTML += `</${chain.pop()}>\n`;
-                    }
+                    parsedHTML += Expressions.handleClosingChar();
                 } else if(char == '\'' || char == '"' && !inAttr) {
                     inString = !inString;
 
@@ -67,7 +56,6 @@ function parse(path, options) {
                             }
                         }
                         varChain = '';
-                    } else {
                     }
                 } else if(inVar) {
                     varChain += char; 
@@ -76,14 +64,14 @@ function parse(path, options) {
                 } else if(char == Constants.attrClosingChar) {
                     inAttr = false;
 
-                    attr = ' ' + Attr.parseAttr(attr);
+                    Expressions.setAttr(' ' + Attr.parseAttr(Expressions.getAttr()));
                 } else if(inAttr) {
-                    attr += char;
+                    Expressions.setAttr(Expressions.getAttr() + char);
                 } else {
-                    expression += char;                    
+                    Expressions.setExpression(Expressions.getExpression() + char);             
                 }
             }
-
+            
             resolve(parsedHTML);
         })
         .catch((err) => {
