@@ -9,7 +9,7 @@ html {
     body {
         div {
             @message@
-            hr{}
+            hr;
             'sss'
             'sass'
         }

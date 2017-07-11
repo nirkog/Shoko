@@ -37,6 +37,8 @@ function parse(path, options) {
                     parsedHTML += Expressions.handleOpeningChar();
                 } else if(char == Constants.expressionClosingChar) {
                     parsedHTML += Expressions.handleClosingChar();
+                } else if(char == Constants.expressionSelfClosingChar) {
+                    parsedHTML += Expressions.handleSelfClosingExpression();
                 } else if(char == '\'' || char == '"' && !inAttr) {
                     inString = !inString;
 

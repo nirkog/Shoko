@@ -31,6 +31,20 @@ module.exports.handleClosingChar = _ => {
     return parsedHTML;
 };
 
+module.exports.handleSelfClosingExpression = _ => {
+    let parsedHTML = '';
+
+    if(selfClosingElements.indexOf(expression) >= 0) {
+        parsedHTML += `<${expression}${attr}/>`;
+    } else {
+        throw Error(`${expression} is not a self closing tag.`);
+    }
+
+    expression = '';
+
+    return parsedHTML;
+};
+
 module.exports.setAttr = (a) => attr = a;
 
 module.exports.getAttr = _ => {
