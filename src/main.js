@@ -29,7 +29,6 @@ function parse(path, options) {
         .then((raw) => {
             let parsedHTML = '';
             let chain = [];
-            let inString = inAttr = false;
             const selfClosingElements = Constants.selfClosingElements;
 
             const combinedDataParsed = Data.getData(raw);
@@ -45,23 +44,19 @@ function parse(path, options) {
                     parsedHTML += Expressions.handleClosingChar();
                 } else if(char == Constants.expressionSelfClosingChar) {
                     parsedHTML += Expressions.handleSelfClosingExpression();
-                } else if(char == '\'' || char == '"' && !inAttr) {
-                    inString = !inString;
-
-                    parsedHTML += Strings.handleQuoteChar(inString, parsedHTML);
-                } else if(inString) {
+                } else if((char == '\'' || char == '"') && !Expressions.inAttr() && !Comments.inComment()) {
+                    parsedHTML += Strings.handle();
+                } else if(Strings.inString()) {
                     Strings.addToChain(char);
                 } else if(char == Constants.varChar) {
-                    parsedHTML += Vars.handle(options, inAttr);
+                    parsedHTML += Vars.handle(options, Expressions.inAttr());
                 } else if(Vars.getInVar()) {
                     Vars.addToChain(char);
                 } else if(char == Constants.attrOpeningChar) {
-                    inAttr = true;
+                    Expressions.handleOpeningAttr();
                 } else if(char == Constants.attrClosingChar) {
-                    inAttr = false;
-
-                    Expressions.setAttr(' ' + Attr.parseAttr(Expressions.getAttr()));
-                } else if(inAttr) {
+                    Expressions.handleClosingAtrr();
+                } else if(Expressions.inAttr()) {
                     Expressions.setAttr(Expressions.getAttr() + char);
                 } else if(char == Constants.commentChar) {
                     parsedHTML += Comments.handle();

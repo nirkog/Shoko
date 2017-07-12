@@ -1,7 +1,10 @@
 const Constants = require('./constants.js');
+const Attr = require('./Attr.js');
+
 let chain = [];
 let attr = expression = '';
 const selfClosingElements = Constants.selfClosingElements;
+let inAttr = false;
 
 module.exports.handleOpeningChar = _ => {
     chain.push(expression);
@@ -45,10 +48,20 @@ module.exports.handleSelfClosingExpression = _ => {
     return parsedHTML;
 };
 
+module.exports.handleOpeningAttr = _ => {
+    inAttr = true;
+};
+
+module.exports.handleClosingAtrr = _ => {
+    inAttr = false;
+
+    attr = ' ' + Attr.parseAttr(attr);
+};
+
 module.exports.setAttr = (a) => attr = a;
 
 module.exports.getAttr = _ => {
-    return attr
+    return attr;
 };
 
 module.exports.setExpression = (e) => expression = e;
@@ -56,3 +69,5 @@ module.exports.setExpression = (e) => expression = e;
 module.exports.getExpression = _ => {
     return expression;
 };
+
+module.exports.inAttr = _ => { return inAttr; };
