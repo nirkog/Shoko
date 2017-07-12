@@ -7,6 +7,10 @@ const Strings = require('./Strings.js');
 const Expressions = require('./Expressions.js');
 const Vars = require('./Vars.js');
 
+const testPath = path.join(__dirname, '../tests/');
+const inputFileName = 'test.rim';
+const outputFileName = 'test.html';
+
 function getFile(path) {
     return new Promise((resolve, reject) => {
         fs.readFile(path, (err, data) => {
@@ -72,7 +76,7 @@ function parse(path, options) {
 }
 
 function parseMyFile() {
-    parse(path.join(__dirname, 'test.rim'), 
+    parse(path.join(testPath, inputFileName), 
     {
         vars: {message: 'WELCOME BATOOCCHII!'}
     })
@@ -83,14 +87,14 @@ function parseMyFile() {
             return data;
     })
     .then((data) => {
-        fs.writeFile(path.join(__dirname, 'test.html'), data);
+        fs.writeFile(path.join(testPath, outputFileName), data);
     })
     .catch((err) => {
         console.log(err);
     });
 }
 
-getFile(path.join(__dirname, 'test.rim'))
+getFile(path.join(testPath, inputFileName))
 .then((data, err) => {
     if(err)
         throw new Error(err);
@@ -99,7 +103,7 @@ getFile(path.join(__dirname, 'test.rim'))
 
     let oldFile = data;
     setInterval(() => {
-        getFile(path.join(__dirname, 'test.rim')).then((data, err) => {
+        getFile(path.join(testPath, inputFileName)).then((data, err) => {
             let newFile = data;
             if(newFile.toString() != oldFile.toString()) {
                 console.log('File changed');
