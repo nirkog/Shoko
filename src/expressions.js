@@ -37,7 +37,7 @@ module.exports.handleSelfClosingExpression = _ => {
     if(selfClosingElements.indexOf(expression) >= 0) {
         parsedHTML += `<${expression}${attr}/>`;
     } else {
-        throw Error(`${expression} is not a self closing tag.`);
+        throw Error(`Rim ERROR - ${expression} is not a self closing tag.`);
     }
 
     expression = '';

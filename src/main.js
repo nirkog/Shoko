@@ -5,6 +5,7 @@ const Attr = require('./attr.js');
 const Constants = require('./constants.js');
 const Strings = require('./Strings.js');
 const Expressions = require('./Expressions.js');
+const Vars = require('./Vars.js');
 
 function getFile(path) {
     return new Promise((resolve, reject) => {
@@ -21,9 +22,9 @@ function parse(path, options) {
     return new Promise((resolve, reject) => {
         getFile(path)
         .then((raw) => {
-            let parsedHTML = stringChain = varChain = expression = attr = '';
+            let parsedHTML = '';
             let chain = [];
-            let inString = inVar = inAttr = false;
+            let inString = inAttr = false;
             const selfClosingElements = Constants.selfClosingElements;
 
             const combinedDataParsed = Data.getData(raw);
@@ -42,25 +43,13 @@ function parse(path, options) {
                 } else if(char == '\'' || char == '"' && !inAttr) {
                     inString = !inString;
 
-                    parsedHTML = Strings.handleQuoteChar(inString, parsedHTML);
-                    stringChain = '';
+                    parsedHTML += Strings.handleQuoteChar(inString, parsedHTML);
                 } else if(inString) {
-                    stringChain += char;
+                    Strings.addToChain(char);
                 } else if(char == Constants.varChar) {
-                    inVar = !inVar;
-
-                    if(!inVar) {
-                        for(key in options.vars) {
-                            if(options.vars.hasOwnProperty(key)) {
-                                if(key == varChain) {
-                                    parsedHTML += `${options.vars[key]}\n`;
-                                }
-                            }
-                        }
-                        varChain = '';
-                    }
-                } else if(inVar) {
-                    varChain += char; 
+                    parsedHTML += Vars.handle(options, inAttr);
+                } else if(Vars.getInVar()) {
+                    Vars.addToChain(char);
                 } else if(char == Constants.attrOpeningChar) {
                     inAttr = true;
                 } else if(char == Constants.attrClosingChar) {
@@ -98,7 +87,7 @@ function parseMyFile() {
     })
     .catch((err) => {
         console.log(err);
-});
+    });
 }
 
 getFile(path.join(__dirname, 'test.rim'))
