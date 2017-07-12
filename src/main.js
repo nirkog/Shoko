@@ -3,9 +3,10 @@ const path = require('path');
 const Data = require('./data.js');
 const Attr = require('./attr.js');
 const Constants = require('./constants.js');
-const Strings = require('./Strings.js');
-const Expressions = require('./Expressions.js');
-const Vars = require('./Vars.js');
+const Strings = require('./strings.js');
+const Expressions = require('./expressions.js');
+const Vars = require('./vars.js');
+const Comments = require('./comments.js');
 
 const testPath = path.join(__dirname, '../tests/');
 const inputFileName = 'test.rim';
@@ -62,6 +63,10 @@ function parse(path, options) {
                     Expressions.setAttr(' ' + Attr.parseAttr(Expressions.getAttr()));
                 } else if(inAttr) {
                     Expressions.setAttr(Expressions.getAttr() + char);
+                } else if(char == Constants.commentChar) {
+                    parsedHTML += Comments.handle();
+                } else if(Comments.inComment()) {
+                    Comments.addToChain(char);
                 } else {
                     Expressions.setExpression(Expressions.getExpression() + char);             
                 }
