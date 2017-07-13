@@ -2,19 +2,17 @@ doctype
 html {
     head {
         title {
-            'Rim templating engine'
+            'Hello world'
+        }
+
+        mixin mix {
+            h1 {
+                @name@
+            }
         }
     }
 
     body {
-        div {
-            @message@
-            hr;br;
-            'sss'
-            'sass'
-            #This is a comment#
-        }
-
-        img[src="http://www.sport5.co.il/Sip_Storage/FILES/0/size624x514/720140.jpg", alt=@message@] {}
-    }
+        +mix+
+    } 
 }

@@ -18,3 +18,8 @@ module.exports.handle = () => {
 module.exports.inComment = () => { return inComment; };
 
 module.exports.addToChain = (char) => chain += char;
+
+module.exports.reset = () => {
+    chain = '';
+    inComment = false;
+};

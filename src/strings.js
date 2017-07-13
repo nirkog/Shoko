@@ -17,3 +17,8 @@ module.exports.handle = _ => {
 module.exports.inString = _ => { return inString; };
 
 module.exports.addToChain = (char) => chain += char;
+
+module.exports.reset = () => {
+    chain = '';
+    inString = false;
+};

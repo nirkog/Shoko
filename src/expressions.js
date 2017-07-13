@@ -11,7 +11,7 @@ module.exports.handleOpeningChar = _ => {
     let parsedHTML = '';
 
     if(selfClosingElements.indexOf(expression) >= 0) {
-        parsedHTML += `<${expression}${attr} />\n`
+        parsedHTML += `<${expression}${attr} />\n`;
     } else {
         parsedHTML += `<${expression}${attr}>\n`;
     }
@@ -71,3 +71,9 @@ module.exports.getExpression = _ => {
 };
 
 module.exports.inAttr = _ => { return inAttr; };
+
+module.exports.reset = () => {
+    chain = [];
+    attr = expression = '';
+    inAttr = false;
+};
