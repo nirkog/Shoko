@@ -2,17 +2,11 @@ doctype
 html {
     head {
         title {
-            'Hello world'
-        }
-
-        mixin mix {
-            h1 {
-                @name@
-            }
+            'Title'
         }
     }
 
     body {
-        +mix+
-    } 
+        import me.rim;
+    }
 }

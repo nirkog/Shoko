@@ -33,7 +33,7 @@ function parse(path, options) {
             let parsedHTML = '';
             const selfClosingElements = Constants.selfClosingElements;
 
-            const combinedDataParsed = Data.getData(raw);
+            const combinedDataParsed = Data.getData(raw, testPath);
             let data = combinedDataParsed[0];
             parsedHTML += combinedDataParsed[1];
 
@@ -45,8 +45,9 @@ function parse(path, options) {
                         if(Mixin.inMixin()) {
                             Mixin.addToParsedMixin(Expressions.handleOpeningChar());
                             Mixin.addToChainLength(1);
-                        } else
+                        } else {
                             parsedHTML += Expressions.handleOpeningChar();
+                        }
                     }
                 } else if(char == Constants.expressionClosingChar) {
                     if(!Mixin.inMixin()) {
@@ -75,9 +76,9 @@ function parse(path, options) {
                     Strings.addToChain(char);
                 } else if(char == Constants.varChar) {
                     if(Mixin.inMixin())
-                        Mixin.addToParsedMixin(Vars.handle(options, Expressions.inAttr(), Mixin.getParameters()));
+                        Mixin.addToParsedMixin(Vars.handle(Expressions.getChain(), options, Expressions.inAttr(), Mixin.getParameters()));
                     else
-                        parsedHTML += Vars.handle(options, Expressions.inAttr());
+                        parsedHTML += Vars.handle(Expressions.getChain(), options, Expressions.inAttr());
                 } else if(Vars.getInVar()) {
                     Vars.addToChain(char);
                 } else if(char == Constants.attrOpeningChar) {
@@ -125,7 +126,7 @@ function reset() {
 function parseMyFile() {
     parse(path.join(testPath, inputFileName), 
     {
-        vars: {name: 'BLANK'}
+        vars: {list: ['name', 'age']}
     })
     .then((data, err) => {
         if(err)
@@ -160,7 +161,7 @@ getFile(path.join(testPath, inputFileName))
             }
         });
     }
-    , 2500);
+    , 500);
 }).catch((err) => {
     console.log(err);
 });

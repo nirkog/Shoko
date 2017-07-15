@@ -4,7 +4,7 @@ const Constants = require('./constants.js');
 let chain = '';
 let inVar = false;
 
-module.exports.handle = (options, inAttr, mixinParameters=[]) => {
+module.exports.handle = (htmlChain, options, inAttr, mixinParameters=[]) => {
     inVar = !inVar;
     let parsedHTML = '';
 
@@ -20,7 +20,22 @@ module.exports.handle = (options, inAttr, mixinParameters=[]) => {
             if(options.vars.hasOwnProperty(key)) {
                 if(key == chain) {
                     if(!inAttr) {
-                        parsedHTML += `${options.vars[key]}\n`;
+                        let inList = false;
+
+                        for(let i = 0; i < Constants.lists.length; i++) {
+                            if(Constants.lists[i] == htmlChain[htmlChain.length - 1]) {
+                                inList = true;
+                                break;
+                            }
+                        }
+                        
+                        if(inList && Array.isArray(options.vars[key])) {
+                            options.vars[key].forEach((item) => {
+                                parsedHTML += `<li>${item}</li>\n`;
+                            });
+                        } else {
+                            parsedHTML += `${options.vars[key]}\n`;
+                        }
                     } else {
                         Expressions.setAttr(Expressions.getAttr() + options.vars[key]);
                     }

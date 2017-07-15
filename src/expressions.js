@@ -12,6 +12,8 @@ module.exports.handleOpeningChar = _ => {
 
     if(selfClosingElements.indexOf(expression) >= 0) {
         parsedHTML += `<${expression}${attr} />\n`;
+    } else if(expression == Constants.importKeyword) {
+
     } else {
         parsedHTML += `<${expression}${attr}>\n`;
     }
@@ -63,6 +65,8 @@ module.exports.setAttr = (a) => attr = a;
 module.exports.getAttr = _ => {
     return attr;
 };
+
+module.exports.getChain = _ => { return chain; };
 
 module.exports.setExpression = (e) => expression = e;
 
