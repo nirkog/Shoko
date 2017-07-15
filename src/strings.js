@@ -1,3 +1,5 @@
+const Expressions = require('./expressions.js');
+
 let chain = '';
 let inString = false;
 
@@ -6,7 +8,7 @@ module.exports.handle = _ => {
     inString = !inString;
 
     if(!inString) {
-        parsedHTML += `${chain}\r\n`;
+        parsedHTML += `${Expressions.getTabs() + '    '}${chain}\r\n`;
     }
 
     chain = '';

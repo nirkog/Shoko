@@ -31,10 +31,10 @@ module.exports.handle = (htmlChain, options, inAttr, mixinParameters=[]) => {
                         
                         if(inList && Array.isArray(options.vars[key])) {
                             options.vars[key].forEach((item) => {
-                                parsedHTML += `<li>${item}</li>\n`;
+                                parsedHTML += `${Expressions.getTabs() + '    '}<li>${item}</li>\n`;
                             });
                         } else {
-                            parsedHTML += `${options.vars[key]}\n`;
+                            parsedHTML += `${Expressions.getTabs() + '    '}${options.vars[key]}\n`;
                         }
                     } else {
                         Expressions.setAttr(Expressions.getAttr() + options.vars[key]);

@@ -6,14 +6,23 @@ let attr = expression = '';
 const selfClosingElements = Constants.selfClosingElements;
 let inAttr = false;
 
+function getTabs() {
+    let tabs = '';
+    for(let i = 1; i < chain.length; i++) {
+        tabs += '   ';
+    }
+    return tabs;
+}
+
+module.exports.getTabs = getTabs;
+
 module.exports.handleOpeningChar = _ => {
     chain.push(expression);
-    let parsedHTML = '';
+    let tabs = getTabs();
+    let parsedHTML = tabs;
 
     if(selfClosingElements.indexOf(expression) >= 0) {
         parsedHTML += `<${expression}${attr} />\n`;
-    } else if(expression == Constants.importKeyword) {
-
     } else {
         parsedHTML += `<${expression}${attr}>\n`;
     }
@@ -25,7 +34,7 @@ module.exports.handleOpeningChar = _ => {
 };
 
 module.exports.handleClosingChar = _ => {
-    let parsedHTML = '';
+    let parsedHTML = getTabs();
 
     if(selfClosingElements.indexOf(chain[chain.length - 1]) >= 0) {
         chain.pop();

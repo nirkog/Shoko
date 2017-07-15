@@ -7,6 +7,8 @@ html {
     }
 
     body {
-        import me.rim;
+        ul {
+            @list@
+        }
     }
 }
