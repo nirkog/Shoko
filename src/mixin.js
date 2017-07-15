@@ -19,7 +19,6 @@ module.exports.checkForMixin = (input) => {
         } else {
             currentMixin = input.substr(Constants.mixinKeyword.length, input.length);
         }
-        Expressions.setExpression('');
 
         for(mixin in mixins) {
             if(mixins.hasOwnProperty(mixin)) {
@@ -108,4 +107,5 @@ module.exports.reset = () => {
     inMixin = inCall = false;
     currentMixin = callChain = parsedMixin = '';
     parameters = [];
+    expressionChainLength = 0;
 };

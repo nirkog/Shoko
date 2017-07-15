@@ -66,10 +66,10 @@ module.exports.handleOpeningAttr = _ => {
 module.exports.handleClosingAtrr = _ => {
     inAttr = false;
 
-    attr = ' ' + Attr.parseAttr(attr);
+    attr = Attr.parseAttr(attr);
 };
 
-module.exports.setAttr = (a) => attr = a;
+module.exports.setAttr = (a) => {attr = a};
 
 module.exports.getAttr = _ => {
     return attr;

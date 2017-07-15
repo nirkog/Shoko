@@ -48,6 +48,8 @@ function parse(path, options) {
                         } else {
                             parsedHTML += Expressions.handleOpeningChar();
                         }
+                    } else {
+                        Expressions.setExpression('');
                     }
                 } else if(char == Constants.expressionClosingChar) {
                     if(!Mixin.inMixin()) {
@@ -55,12 +57,17 @@ function parse(path, options) {
                     } else {
                         Mixin.addToChainLength(-1);
 
-                        if(Mixin.getExpressionChainLength() < 0)
+                        if(Mixin.getExpressionChainLength() < -1)
                             Mixin.createMixin();
                         else
                             Mixin.addToParsedMixin(Expressions.handleClosingChar());
                     }
                 } else if(char == Constants.expressionSelfClosingChar) {
+                    if(Constants.expressionSelfClosingChar == Constants.endOfVarAssignmentChar && Vars.getInAssignment()) {
+                        Vars.endAssignment();
+                        continue;
+                    }
+
                     if(Mixin.inMixin())
                         Mixin.addToParsedMixin(Expressions.handleSelfClosingExpression());
                     else
@@ -75,12 +82,26 @@ function parse(path, options) {
                 } else if(Strings.inString()) {
                     Strings.addToChain(char);
                 } else if(char == Constants.varChar) {
-                    if(Mixin.inMixin())
-                        Mixin.addToParsedMixin(Vars.handle(Expressions.getChain(), options, Expressions.inAttr(), Mixin.getParameters()));
-                    else
-                        parsedHTML += Vars.handle(Expressions.getChain(), options, Expressions.inAttr());
+                    if(Mixin.inMixin()) {
+                        if(i == data.length - 1)
+                            Mixin.addToParsedMixin(Vars.handle(Expressions.getChain(), options, Expressions.inAttr(), Mixin.getParameters()));
+                        else
+                            Mixin.addToParsedMixin(Vars.handle(Expressions.getChain(), options, Expressions.inAttr(), data[i + 1], Mixin.getParameters()));
+                    }
+                    else {
+                        if(i == data.length - 1)
+                            parsedHTML += Vars.handle(Expressions.getChain(), options, Expressions.inAttr());
+                        else
+                            parsedHTML += Vars.handle(Expressions.getChain(), options, Expressions.inAttr(), data[i + 1], []);
+                    }
                 } else if(Vars.getInVar()) {
-                    Vars.addToChain(char);
+                    if(char == Constants.endOfVarAssignmentChar) {
+                        Vars.endAssignment();
+                    } else {
+                        Vars.addToChain(char);
+                    }
+                } else if(Vars.getInAssignment()) {
+                    Vars.addToValueChain(char);
                 } else if(char == Constants.attrOpeningChar) {
                     Expressions.handleOpeningAttr();
                 } else if(char == Constants.attrClosingChar) {
