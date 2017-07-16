@@ -20,3 +20,5 @@ module.exports.mixinParameterOpeningChar = '(';
 module.exports.mixinParameterClosingChar = ')';
 
 module.exports.importKeyword = 'import';
+
+module.exports.escapeChar = '\\';

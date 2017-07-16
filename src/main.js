@@ -15,6 +15,9 @@ const testPath = path.join(__dirname, '../tests/');
 const inputFileName = 'test.rim';
 const outputFileName = 'test.html';
 
+let a = String.prototype.rainbow;
+console.log(String.prototype.red);
+
 function getFile(path) {
     return new Promise((resolve, reject) => {
         fs.readFile(path, (err, data) => {
@@ -63,7 +66,7 @@ function parse(path, options) {
                             Mixin.addToParsedMixin(Expressions.handleClosingChar());
                     }
                 } else if(char == Constants.expressionSelfClosingChar) {
-                    if(Constants.expressionSelfClosingChar == Constants.endOfVarAssignmentChar && Vars.getInAssignment()) {
+                    if(Constants.expressionSelfClosingChar == Constants.endOfVarAssignmentChar && Vars.inAssignment()) {
                         Vars.endAssignment();
                         continue;
                     }
@@ -73,6 +76,10 @@ function parse(path, options) {
                     else
                         parsedHTML += Expressions.handleSelfClosingExpression();
                 } else if((char == '\'' || char == '"') && !Expressions.inAttr() && !Comments.inComment()) {
+                    if(Vars.inVar()) {
+                        throw new Error('var names cannot include strings');
+                    }
+
                     if(Mixin.inMixin())
                         Mixin.addToParsedMixin(Strings.handle());
                     else if(Mixin.inMixinCall())
@@ -80,7 +87,27 @@ function parse(path, options) {
                     else
                         parsedHTML += Strings.handle();
                 } else if(Strings.inString()) {
-                    Strings.addToChain(char);
+                    if(char == Constants.varChar) {
+                        if(Strings.isEscaped()) {
+                            Strings.addToChain(char);
+                            Vars.setInVar(!Vars.inVar());
+
+                            if(!Vars.inVar()) {
+                                Strings.setEscaped(false);
+                            }
+                        } else {
+                            Strings.addToChain(Vars.handle(Expressions.getChain(), options, Expressions.inAttr()));
+                        }
+                    } else if(Vars.inVar()) {
+                        if(Strings.isEscaped())
+                            Strings.addToChain(char);
+                        else
+                            Vars.addToChain(char);
+                    } else if(char == Constants.escapeChar) {
+                        Strings.setEscaped(true);
+                    } else {
+                        Strings.addToChain(char);
+                    }
                 } else if(char == Constants.varChar) {
                     if(Mixin.inMixin()) {
                         if(i == data.length - 1)
@@ -94,13 +121,13 @@ function parse(path, options) {
                         else
                             parsedHTML += Vars.handle(Expressions.getChain(), options, Expressions.inAttr(), data[i + 1], []);
                     }
-                } else if(Vars.getInVar()) {
+                } else if(Vars.inVar()) {
                     if(char == Constants.endOfVarAssignmentChar) {
                         Vars.endAssignment();
                     } else {
                         Vars.addToChain(char);
                     }
-                } else if(Vars.getInAssignment()) {
+                } else if(Vars.inAssignment()) {
                     Vars.addToValueChain(char);
                 } else if(char == Constants.attrOpeningChar) {
                     Expressions.handleOpeningAttr();

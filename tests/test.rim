@@ -7,10 +7,10 @@ html {
     }
 
     body {
-        @myVar@ = color: red;
+        import me.rim;
 
-        h1[style="color: blue"] {
-            'I am Blue'
+        h1[style="@color1@"] {
+            'I am \@color1@ @color1@'
         }
     }
 }

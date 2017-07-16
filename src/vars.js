@@ -36,13 +36,15 @@ module.exports.handle = (htmlChain, options, inAttr, nextChar='', mixinParameter
                         
                         if(inList && Array.isArray(localVars[variable])) {
                             localVars[variable].forEach((item) => {
-                                parsedHTML += `${Expressions.getTabs() + '    '}<li>${item}</li>\n`;
+                                parsedHTML += `<li>${item}</li>\n`;
                             });
                         } else {
-                            parsedHTML += `${Expressions.getTabs() + '    '}${localVars[variable]}\n`;
+                            parsedHTML += `${localVars[variable]}`;
                         }
+
+                        return parsedHTML;
                     } else {
-                        Expressions.setAttr(Expressions.getAttr() + '"' + localVars[variable] + '"');
+                        Expressions.setAttr(Expressions.getAttr() + localVars[variable]);
                     }
                 }
             }
@@ -95,8 +97,10 @@ module.exports.endAssignment = () => {
 module.exports.addToChain = (char) => chain += char;
 module.exports.addToValueChain = (char) => valueChain += char;
 
-module.exports.getInVar = _  => {return inVar;};
-module.exports.getInAssignment = _ => { return inAssignment; };
+module.exports.inVar = _  => {return inVar;};
+module.exports.inAssignment = _ => { return inAssignment; };
+
+module.exports.setInVar = (v) => inVar = v;
 
 module.exports.reset = () => {
     chain = valueChain = '';
