@@ -24,6 +24,8 @@ function cleanData(raw) {
     return data;
 }
 
+module.exports.cleanData = cleanData;
+
 function searchForStrings(data) {
     let stringPositions = [];
     let inString = false;
@@ -114,9 +116,21 @@ module.exports.getData = (raw, dirPath) => {
 
         let statement = data.slice(startIndex, endIndex + 1);
 
-        let file = fs.readFileSync(path.join(dirPath, importFile));
+        if(importFile.indexOf(',') == -1) {
+            let file = fs.readFileSync(path.join(dirPath, importFile));
+            data = data.replace(statement, cleanData(file.toString()));
+        } else {
+            let addedData = '';
+            let files = importFile.split(',');
 
-        data = data.replace(statement, cleanData(file.toString()));
+            files.forEach((file) => {
+                let fileData = fs.readFileSync(path.join(dirPath, file));
+                addedData += fileData.toString();
+            });
+
+            data = data.replace(statement, cleanData(addedData));
+        }
+
         stringPositions = searchForStrings(data);
     }
 
