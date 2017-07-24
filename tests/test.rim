@@ -9,12 +9,6 @@ html {
     }
     
     body {
-        mixin printList(list) {
-            div {
-                @list@
-            }
-        }
-
-        +printList(12)+
+        #!hello world#
     }
 }

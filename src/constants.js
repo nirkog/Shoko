@@ -13,6 +13,7 @@ module.exports.varAssignmentChar = '=';
 module.exports.endOfVarAssignmentChar = ';';
 
 module.exports.commentChar = '#';
+module.exports.hiddenCommentChar = '!';
 
 module.exports.mixinChar = '+';
 module.exports.mixinKeyword = 'mixin';
