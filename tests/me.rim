@@ -1,5 +1,0 @@
-mixin printName(nasme) {
-    h3 {
-        @nasme@
-    }
-}

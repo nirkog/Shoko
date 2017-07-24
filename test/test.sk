@@ -9,6 +9,8 @@ html {
     }
     
     body {
-        #!hello world#
+        h1 {
+            'What\'s up, @name@'
+        }
     }
 }

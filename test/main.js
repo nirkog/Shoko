@@ -1,32 +1,23 @@
- const fs = require('fs');
+const fs = require('fs');
 const path = require('path');
 const colors = require('colors');
 
-const Data = require('./data.js');
+/*const Data = require('./data.js');
 const Attr = require('./attr.js');
 const Constants = require('./constants.js');
 const Strings = require('./strings.js');
 const Expressions = require('./expressions.js');
 const Vars = require('./vars.js');
 const Comments = require('./comments.js');
-const Mixin = require('./mixin.js');
+const Mixin = require('./mixin.js');*/
 
-const testPath = path.join(__dirname, '../tests/');
-const inputFileName = 'test.rim';
+const shoko = require('./../index');
+
+const testPath = path.join(__dirname, '../test/');
+const inputFileName = 'test.sk';
 const outputFileName = 'test.html';
 
-function getFile(path) {
-    return new Promise((resolve, reject) => {
-        fs.readFile(path, (err, data) => {
-            if(err)
-                return reject(err);
-            
-            resolve(data);
-        });
-    });
-}
-
-function parse(path, options) {
+/*function parse(path, options) {
     return new Promise((resolve, reject) => {
         getFile(path)
         .then((raw) => {
@@ -218,4 +209,60 @@ getFile(path.join(testPath, inputFileName))
     , 500);
 }).catch((err) => {
     console.log(err);
-}); 
+});
+
+*/
+
+function getFile(path) {
+    return new Promise((resolve, reject) => {
+        fs.readFile(path, (err, data) => {
+            if(err)
+                return reject(err);
+            
+            resolve(data);
+        });
+    });
+}
+
+getFile(path.join(testPath, inputFileName))
+    .then((res, err) => {
+        if(err)
+            console.log(err);
+
+        const options = {vars: {name: 'Avi Nimni'}};
+        let newFile = '', oldFile = res.toString();
+        let data = shoko.render(oldFile, options);
+        fs.writeFile(path.join(testPath, outputFileName), data);
+
+        setInterval(() => {
+            getFile(path.join(testPath, inputFileName))
+                .then((res, err) => {
+                    newFile = res.toString();
+
+                    if(newFile != oldFile) {
+                        oldFile = newFile;
+                        data = shoko.render(newFile, options);
+                        fs.writeFile(path.join(testPath, outputFileName), data);
+
+                        console.log('updating file...'.rainbow);
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        }, 500);
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+
+
+//Simple rendering example
+/*let rawshoko 
+    = "h1 { 'Hi, @name@' }";
+
+let renderedHTML = shoko.render(rawshoko, {vars: {name: 'Nir Kogman'}});
+console.log(renderedHTML);
+
+fs.writeFile('t.html', renderedHTML);
+*/

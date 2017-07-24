@@ -1,19 +1,21 @@
 {
-  "name": "rim",
+  "name": "shoko",
   "version": "1.0.0",
   "description": "a template engine",
-  "main": "main.js",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "nodemon src/main.js",
+    "test": "mocha",
+    "build": "nodemon test/main.js",
     "server": "webpack-dev-server --web-content src"
   },
   "author": "Nir Kogman",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "nodemon": "^1.11.0"
   },
   "dependencies": {
-    "colors": "^1.1.2"
+    "chai": "^4.1.0",
+    "colors": "^1.1.2",
+    "mocha": "^3.4.2"
   }
 }

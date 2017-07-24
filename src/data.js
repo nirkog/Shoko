@@ -88,7 +88,7 @@ function handleEmptyLines(data) {
 }
 
 module.exports.getData = (raw, dirPath) => {
-    let data = raw.toString().split('\r\n');
+    let data = raw.split('\r\n');
     
     let doctype = handleDoctype(data[0]);
 
@@ -106,7 +106,7 @@ module.exports.getData = (raw, dirPath) => {
         doctype = '';
         data.splice(0, 1);
     } else {
-        throw 'No doctype specified';
+        doctype = Constants.doctypes['html'] + '\n';
     }
 
     handleEmptyLines(data);

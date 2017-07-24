@@ -1,2 +1,2 @@
-# Rim
+# Shoko
 A templating engine
