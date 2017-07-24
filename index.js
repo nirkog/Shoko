@@ -163,7 +163,7 @@ function renderFile(filePath, options, fn) {
 
         let result = render(data.toString(), options);
         
-        fn(result, err);
+        fn(err, result);
     });
 }
 
