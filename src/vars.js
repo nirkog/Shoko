@@ -1,29 +1,38 @@
 const Expressions = require('./expressions.js');
 const Constants = require('./constants.js');
+const Strings = require('./strings');
+const Mixin = require('./mixin');
 
 let chain = valueChain = '';
 let inVar = inAssignment = false;
 let localVars = {};
 
-module.exports.handle = (htmlChain, options, inAttr, nextChar='', mixinParameters=[]) => {
+module.exports.handle = (htmlChain, options, inAttr, nextChar='') => {
     inVar = !inVar;
     let parsedHTML = '';
-
+    let found = '';
+    
     if(!inVar) {
         if(nextChar == Constants.varAssignmentChar) {
             inAssignment = true;
             return '';
         }
-        for(let i = 0; i < mixinParameters.length; i++) {
-            if(mixinParameters[i] == chain) {
-                parsedHTML = chain;
-                chain = '';
-                return `${Constants.varChar}${parsedHTML}${Constants.varChar}\n`;
+        if(Mixin.inMixin()) {
+            mixinParameters = Mixin.getParameters();
+            for(let i = 0; i < mixinParameters.length; i++) {
+                if(mixinParameters[i] == chain) {
+                    found = true;
+                    parsedHTML = chain;
+                    chain = '';
+                    return `${Expressions.getTabs() + Constants.tab}${Constants.varChar}${parsedHTML}${Constants.varChar}\n`;
+                }
             }
         }
         for(variable in localVars) {
             if(localVars.hasOwnProperty(variable)) {
                 if(variable == chain) {
+                    found = true;
+
                     if(!inAttr) {
                         let inList = false;
 
@@ -52,6 +61,7 @@ module.exports.handle = (htmlChain, options, inAttr, nextChar='', mixinParameter
         for(key in options.vars) {
             if(options.vars.hasOwnProperty(key)) {
                 if(key == chain) {
+                    found = true;
                     if(!inAttr) {
                         let inList = false;
 
@@ -62,18 +72,24 @@ module.exports.handle = (htmlChain, options, inAttr, nextChar='', mixinParameter
                             }
                         }
                         
+                        let tabs = Strings.inString() ? '' : Expressions.getTabs() + '    ';
+                        let newLine = Strings.inString() ? '' : '\n';
                         if(inList && Array.isArray(options.vars[key])) {
                             options.vars[key].forEach((item) => {
-                                parsedHTML += `${Expressions.getTabs() + '    '}<li>${item}</li>\n`;
+                                parsedHTML += `${tabs}<li>${item}</li>${newLine}`;
                             });
                         } else {
-                            parsedHTML += `${Expressions.getTabs() + '    '}${options.vars[key]}\n`;
+                            parsedHTML += `${tabs}${options.vars[key]}${newLine}`;
                         }
                     } else {
                         Expressions.setAttr(Expressions.getAttr() + '"' + options.vars[key] + '"');
                     }
                 }
             }
+        }
+        
+        if(!found) {
+            throw new Error(chain + ' is undefined.');
         }
 
         chain = '';

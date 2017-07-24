@@ -1,12 +1,20 @@
-doctype
+doctype html
 html {
     head {
         title {
-            'Rim templating engine'
+            'Rim'
         }
+        
+        link[rel="stylesheet", href="style.css"];
     }
-
+    
     body {
-        import im.rim, me.rim;
+        mixin printList(list) {
+            div {
+                @list@
+            }
+        }
+
+        +printList(12)+
     }
 }

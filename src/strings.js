@@ -1,4 +1,6 @@
 const Expressions = require('./expressions.js');
+const Constants = require('./constants');
+const Mixin = require('./mixin');
 
 let chain = '';
 let inString = escaped = false;
@@ -8,7 +10,8 @@ module.exports.handle = _ => {
     inString = !inString;
 
     if(!inString) {
-        parsedHTML += `${Expressions.getTabs() + '    '}${chain}\r\n`;
+        let tabs = Mixin.inMixinCall() ? '' : Expressions.getTabs() + Constants.tab;
+        parsedHTML += `${tabs}${chain}\r\n`;
     }
 
     chain = '';

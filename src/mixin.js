@@ -51,7 +51,8 @@ module.exports.endMixinCall = _ => {
     let parameters = parsed = null;
     if(callChain.indexOf(Constants.mixinParameterOpeningChar) != -1 && callChain.indexOf(Constants.mixinParameterClosingChar) != -1) {
         parameters = callChain.slice(callChain.indexOf(Constants.mixinParameterOpeningChar) + 1, callChain.indexOf(Constants.mixinParameterClosingChar));
-        parameters = parameters.split('\r\n').join('').split(',');
+        if(parameters != '')
+            parameters = parameters.split('\r\n').join('').split(',');
         
         callChain = callChain.slice(0, callChain.indexOf(Constants.mixinParameterOpeningChar));
     }
@@ -81,6 +82,9 @@ module.exports.endMixinCall = _ => {
                 parameters[i]
             );
         }
+    } else if(mixins[mixin].parameters.length > 0) {
+        if(parameters.length != mixins[mixin].parameters.length)
+            throw new Error(`Expected ${mixins[mixin].parameters.length} arguments, got 0.`);
     }
 
     inCall = false;

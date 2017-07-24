@@ -9,7 +9,7 @@ let inAttr = false;
 function getTabs() {
     let tabs = '';
     for(let i = 1; i < chain.length; i++) {
-        tabs += '   ';
+        tabs += Constants.tab;
     }
     return tabs;
 }
@@ -22,7 +22,8 @@ module.exports.handleOpeningChar = _ => {
     let parsedHTML = tabs;
 
     if(selfClosingElements.indexOf(expression) >= 0) {
-        parsedHTML += `<${expression}${attr} />\n`;
+        const space = attr == '' ? '' : ' ';
+        parsedHTML += `<${expression}${attr}${space}/>\n`;
     } else {
         parsedHTML += `<${expression}${attr}>\n`;
     }
@@ -46,15 +47,17 @@ module.exports.handleClosingChar = _ => {
 };
 
 module.exports.handleSelfClosingExpression = _ => {
-    let parsedHTML = '';
+    let parsedHTML = getTabs() + Constants.tab;
 
     if(selfClosingElements.indexOf(expression) >= 0) {
-        parsedHTML += `<${expression}${attr}/>\n`;
+        const space = attr == '' ? '' : ' ';
+        parsedHTML += `<${expression}${attr}${space}/>\n`;
     } else {
         throw Error(`Rim ERROR - ${expression} is not a self closing tag.`);
     }
 
     expression = '';
+    attr = '';
 
     return parsedHTML;
 };

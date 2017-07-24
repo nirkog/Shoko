@@ -1,3 +1,5 @@
-h1 {
-    'I am second'
+mixin printName(nasme) {
+    h3 {
+        @nasme@
+    }
 }

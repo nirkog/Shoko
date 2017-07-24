@@ -1,4 +1,4 @@
-const fs = require('fs');
+ const fs = require('fs');
 const path = require('path');
 const colors = require('colors');
 
@@ -14,9 +14,6 @@ const Mixin = require('./mixin.js');
 const testPath = path.join(__dirname, '../tests/');
 const inputFileName = 'test.rim';
 const outputFileName = 'test.html';
-
-let a = String.prototype.rainbow;
-console.log(String.prototype.red);
 
 function getFile(path) {
     return new Promise((resolve, reject) => {
@@ -60,7 +57,7 @@ function parse(path, options) {
                     } else {
                         Mixin.addToChainLength(-1);
 
-                        if(Mixin.getExpressionChainLength() < -1)
+                        if(Mixin.getExpressionChainLength() < 0)
                             Mixin.createMixin();
                         else
                             Mixin.addToParsedMixin(Expressions.handleClosingChar());
@@ -80,12 +77,18 @@ function parse(path, options) {
                         throw new Error('var names cannot include strings');
                     }
 
-                    if(Mixin.inMixin())
+                    if(Mixin.inMixin()) {
                         Mixin.addToParsedMixin(Strings.handle());
-                    else if(Mixin.inMixinCall())
+                    } else if(Mixin.inMixinCall()) {
                         Mixin.addToCallChain(Strings.handle());
-                    else
-                        parsedHTML += Strings.handle();
+                    } else {
+                        if(Strings.inString() && Strings.isEscaped()) {
+                            Strings.addToChain(char); 
+                            Strings.setEscaped(false);
+                        } else {
+                            parsedHTML += Strings.handle();
+                        }
+                    }
                 } else if(Strings.inString()) {
                     if(char == Constants.varChar) {
                         if(Strings.isEscaped()) {
@@ -111,9 +114,12 @@ function parse(path, options) {
                 } else if(char == Constants.varChar) {
                     if(Mixin.inMixin()) {
                         if(i == data.length - 1)
-                            Mixin.addToParsedMixin(Vars.handle(Expressions.getChain(), options, Expressions.inAttr(), Mixin.getParameters()));
+                            Mixin.addToParsedMixin(Vars.handle(Expressions.getChain(), options, Expressions.inAttr(), ''));
                         else
-                            Mixin.addToParsedMixin(Vars.handle(Expressions.getChain(), options, Expressions.inAttr(), data[i + 1], Mixin.getParameters()));
+                            Mixin.addToParsedMixin(Vars.handle(Expressions.getChain(), options, Expressions.inAttr(), data[i + 1]));
+                    }
+                    else if(Mixin.inMixinCall()) {
+                        Mixin.addToCallChain(Vars.handle(Expressions.getChain(), options, Expressions.inAttr(), ''));
                     }
                     else {
                         if(i == data.length - 1)
@@ -174,7 +180,7 @@ function reset() {
 function parseMyFile() {
     parse(path.join(testPath, inputFileName), 
     {
-        vars: {list: ['name', 'age']}
+        vars: {}
     })
     .then((data, err) => {
         if(err)
@@ -186,7 +192,7 @@ function parseMyFile() {
         fs.writeFile(path.join(testPath, outputFileName), data);
     })
     .catch((err) => {
-        console.log(err);
+        console.log(err.toString().red);
     });
 }
 
@@ -212,4 +218,4 @@ getFile(path.join(testPath, inputFileName))
     , 500);
 }).catch((err) => {
     console.log(err);
-});
+}); 

@@ -26,13 +26,19 @@ function cleanData(raw) {
 
 module.exports.cleanData = cleanData;
 
+/* 
+
+Not Used!!!!!
+Should be implemeted instead of inline searching!
+
+*/
 function searchForStrings(data) {
     let stringPositions = [];
-    let inString = false;
+    let inString = escaped = false;
     let stringCount = 0;
 
     for(let i = 0; i < data.length; i++) {
-        if(data[i] == '\'' || data[i] == '"') {
+        if((data[i] == '\'' || data[i] == '"') && !escaped) {
             inString = !inString;
 
             if(inString) {
@@ -42,29 +48,78 @@ function searchForStrings(data) {
 
                 stringCount++;
             }
+        } else if(data[i] === Constants.escapeChar) {
+            escaped = true;
+        } else {
+            escaped = false;
         }
     }
 
     return stringPositions;
 }
 
+function handleDoctype(line) {
+    if(line.substr(0, Constants.doctypeKeyword.length) === Constants.doctypeKeyword) {
+        if(line.length === Constants.doctypeKeyword.length)
+            return Constants.doctypes['html'];
+        
+        for(doctype in Constants.doctypes) {
+            if(Constants.doctypes.hasOwnProperty(doctype)) {
+                if(line.substr(Constants.doctypeKeyword.length + 1, line.length) === doctype) {
+                    return Constants.doctypes[doctype];
+                }
+            }
+        }
+
+        return -1;
+    } else {
+        return false;
+    }
+}
+
+//Not finished
+function handleEmptyLines(data) {
+    data.forEach((line) => {
+        let noSpaces = line.split(' ').join('');
+        if(noSpaces == '\n' || noSpaces == '\r\n' || noSpaces === '') {
+            //Detects empty lines
+        }
+    });
+}
+
 module.exports.getData = (raw, dirPath) => {
     let data = raw.toString().split('\r\n');
-    doctype = '';
+    
+    let doctype = handleDoctype(data[0]);
 
-    if(data[0] == 'doctype') {
-        doctype += '<!DOCTYPE html>\n';
+    if(doctype && doctype != -1) {
+        /*if(data[0].length === Constants.doctypeKeyword.length)
+            console.log(`Using default doctype: ${Constants.doctypes['html']}`.yellow);
+        else
+            console.log(`Doctype: ${doctype}`.yellow);*/
+
+        doctype += '\n';
         data.splice(0, 1);
+    } else if(doctype == -1) {
+        throw new Error(`${data[0].substr(Constants.doctypeKeyword.length + 1, data[0].length)} is not a supported doctype.`);
+
+        doctype = '';
+        data.splice(0, 1);
+    } else {
+        throw 'No doctype specified';
     }
 
-    let inString = inComment = false;
+    handleEmptyLines(data);
+
     data = data.join('');
+
+    let inString = inComment = escaped = false;
 
     let stringPositions = [];
     let stringCount = 0;
 
     for(let i = 0; i < data.length; i++) {
-        if(data[i] == '\'' || data[i] == '"') {
+        if((data[i] == '\'' || data[i] == '"') && !escaped) {
             inString = !inString;
 
             if(inString) {
@@ -81,6 +136,10 @@ module.exports.getData = (raw, dirPath) => {
                 data = data.substr(0, i) + data.substr(i + 1);
                 i--;
             }
+        } else if(data[i] == Constants.escapeChar) {
+            escaped = true;
+        } else {
+            if(escaped) escaped = false;
         }
     }
 
