@@ -12,7 +12,42 @@ simply download it from npm, like this.
 
     npm install shoko --save
 
-## Usage
+## Syntax
+
+Shoko has a very easy to grasp syntax. Elements in shoko are seprated by curly braces.  
+Here is an example:
+
+    doctype html
+    html {
+        head {
+            title {
+                'My First Shoko Page'
+            }
+        }
+
+        body {
+            h1 {
+                'Shoko is awesome.'
+            }
+        }
+    }
+
+Which will render to this HTML:
+
+    <!DOCTYPE html>
+    <head>
+        <head>
+            <title>My First Shoko Page</title>
+        </head>
+
+        <body>
+            <h1>
+                Shoko is awesome
+            </h1>
+        </body>
+    </head>
+
+## API
 
 **Shoko is really easy to use.**  
 To render plain shoko text, just use the render function.
