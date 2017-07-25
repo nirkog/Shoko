@@ -17,5 +17,14 @@
     "chai": "^4.1.0",
     "colors": "^1.1.2",
     "mocha": "^3.4.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nirkog/Shoko.git"
+  },
+  "homepage": "https://github.com/nirkog/Shoko",
+  "bugs": {
+    "url": "https://github.com/nirkog/Shoko/issues",
+    "email": "nirkog@gmail.com"
   }
 }
