@@ -229,7 +229,7 @@ getFile(path.join(testPath, inputFileName))
         if(err)
             console.log(err);
 
-        const options = {vars: {name: 'Avi Nimni'}};
+        const options = {name: 'Avi Nimni'};
         let newFile = '', oldFile = res.toString();
         let data = shoko.render(oldFile, options);
         fs.writeFile(path.join(testPath, outputFileName), data);
@@ -240,11 +240,11 @@ getFile(path.join(testPath, inputFileName))
                     newFile = res.toString();
 
                     if(newFile != oldFile) {
+                        console.log('updating file...'.rainbow);
+
                         oldFile = newFile;
                         data = shoko.render(newFile, options);
                         fs.writeFile(path.join(testPath, outputFileName), data);
-
-                        console.log('updating file...'.rainbow);
                     }
                 })
                 .catch(err => {
@@ -255,7 +255,6 @@ getFile(path.join(testPath, inputFileName))
     .catch((err) => {
         console.log(err);
     });
-
 
 //Simple rendering example
 /*let rawshoko 

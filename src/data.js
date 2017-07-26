@@ -101,10 +101,27 @@ module.exports.getData = (raw, dirPath) => {
         doctype += '\n';
         data.splice(0, 1);
     } else if(doctype == -1) {
-        throw new Error(`${data[0].substr(Constants.doctypeKeyword.length + 1, data[0].length)} is not a supported doctype.`);
+        if(data[0].indexOf(';') == -1) {
+            throw new Error(`${data[0].substr(Constants.doctypeKeyword.length + 1, data[0].length)} is not a supported doctype.`);
 
-        doctype = '';
-        data.splice(0, 1);
+            doctype = '';
+            data.splice(0, 1);
+        } else {
+            //Handle single line doctype statements
+
+            let expression = data[0].substring(0, data[0].indexOf(';'))
+            let type = data[0].substring(Constants.doctypeKeyword.length + 1, data[0].indexOf(';'));
+            
+            if(type == ';') {
+                doctype = Constants.doctypes['html'] + '\n';
+            } else if(type in Constants.doctypes) {
+                doctype = Constants.doctypes[type] + '\n';
+            } else {
+                throw new Error(`${type} is not a supported doctype.`);
+            }
+
+            data[0] = data[0].slice(data[0].indexOf(';') + 1, data[0].length);
+        }
     } else {
         doctype = Constants.doctypes['html'] + '\n';
     }

@@ -58,8 +58,8 @@ module.exports.handle = (htmlChain, options, inAttr, nextChar='') => {
                 }
             }
         }
-        for(key in options.vars) {
-            if(options.vars.hasOwnProperty(key)) {
+        for(key in options) {
+            if(options.hasOwnProperty(key)) {
                 if(key == chain) {
                     found = true;
                     if(!inAttr) {
@@ -74,15 +74,15 @@ module.exports.handle = (htmlChain, options, inAttr, nextChar='') => {
                         
                         let tabs = Strings.inString() ? '' : Expressions.getTabs() + '    ';
                         let newLine = Strings.inString() ? '' : '\n';
-                        if(inList && Array.isArray(options.vars[key])) {
-                            options.vars[key].forEach((item) => {
+                        if(inList && Array.isArray(options[key])) {
+                            options[key].forEach((item) => {
                                 parsedHTML += `${tabs}<li>${item}</li>${newLine}`;
                             });
                         } else {
-                            parsedHTML += `${tabs}${options.vars[key]}${newLine}`;
+                            parsedHTML += `${tabs}${options[key]}${newLine}`;
                         }
                     } else {
-                        Expressions.setAttr(Expressions.getAttr() + '"' + options.vars[key] + '"');
+                        Expressions.setAttr(Expressions.getAttr() + '"' + options[key] + '"');
                     }
                 }
             }

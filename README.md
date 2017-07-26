@@ -42,7 +42,7 @@ Which will render to this HTML:
 
         <body>
             <h1>
-                Shoko is awesome
+                My First Shoko Page
             </h1>
         </body>
     </head>
