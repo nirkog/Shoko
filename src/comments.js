@@ -5,6 +5,11 @@ let chain = '';
 let inComment = hidden = false;
 
 module.exports.handle = () => {
+    if(!inComment && Expressions.getExpression() != '') {
+        Expressions.setExpression(Expressions.getExpression() + Constants.commentChar);
+        return '';
+    }
+
     let parsedHTML = '';
 
     inComment = !inComment;

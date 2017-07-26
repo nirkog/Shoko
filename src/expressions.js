@@ -14,18 +14,132 @@ function getTabs() {
     return tabs;
 }
 
+function shorthandProperties() {
+    if(expression.indexOf('.') != -1 || expression.indexOf('#') != -1) {
+        let startIndex;
+        if(expression.indexOf('.') == -1) {
+            startIndex = expression.indexOf('#');
+        } else if(expression.indexOf('#') == -1) {
+            startIndex = expression.indexOf('.');
+        } else {
+            startIndex = expression.indexOf('.') > expression.indexOf('#') ? expression.indexOf('#') : expression.indexOf('.'); 
+        }
+
+        let properties = expression.slice(startIndex, expression.length);
+        let tag = expression.slice(0, startIndex);
+        let inClass = inID = false;
+        let classes = [];
+        let id = '';
+        let currentPorperty = '';
+
+        for(let i = 0; i < properties.length; i++) {
+            let char = properties[i];
+
+            if(char == '.') {
+                if(!inClass) {
+                    if(currentPorperty != '') {
+                        if(id != '')
+                            throw new Error('multipule ids');
+
+                        id = currentPorperty;
+                        currentPorperty = '';
+                    }
+
+                    inClass = true;
+                    inID = false;
+                } else {
+                    if(currentPorperty != '') {
+                        classes.push(currentPorperty);
+                        currentPorperty = '';
+                    }
+                }
+            } else if(char == '#') {
+                if(!inID) {
+                    if(currentPorperty != '') {
+                        classes.push(currentPorperty);
+                        currentPorperty = '';
+                    }
+
+                    inID = true;
+                    inClass = false;
+                } else {
+                    if(currentPorperty != '') {
+                        if(id != '')
+                            throw new Error('multipule ids');
+
+                        id = currentPorperty;
+                        currentPorperty = '';
+                    }
+                }
+            } else if(inClass || inID) {
+                if(char != ' ')
+                    currentPorperty += char;
+            }
+        }
+
+        if(inID) {
+            if(id != '')
+                throw new Error('multipule ids');
+            id = currentPorperty;
+        } else if(inClass) {
+            classes.push(currentPorperty);
+        }
+
+        let element = {classes: classes, id: id, tag: tag};
+
+        return element;
+    } else {
+        return null;
+    }
+}
+
 module.exports.getTabs = getTabs;
 
 module.exports.handleOpeningChar = _ => {
-    chain.push(expression);
+    let element = shorthandProperties();
+
+    chain.push(element ? element.tag : expression);
+
     let tabs = getTabs();
     let parsedHTML = tabs;
 
     if(selfClosingElements.indexOf(expression) >= 0) {
         const space = attr == '' ? '' : ' ';
-        parsedHTML += `<${expression}${attr}${space}/>\n`;
+        if(!element) {
+            parsedHTML += `<${expression}${attr}${space}/>\n`;
+        } else {
+            if(element.id != '')
+                attr += ` id="${element.id}"`;
+            
+            if(element.classes.length > 0) {
+                attr += ' class="';
+                element.classes.forEach((className) => {
+                    let spaceAfter = element.classes.indexOf(className) == element.classes.length - 1 ? '' : ' ';
+                    attr += className + spaceAfter;
+                });
+                attr += '"';
+            }
+
+            parsedHTML += `<${element.tag}${attr}${space}/>\n`;
+        }
     } else {
-        parsedHTML += `<${expression}${attr}>\n`;
+        if(!element) {
+            parsedHTML += `<${expression}${attr}>\n`;
+        } else {
+            if(element.id != '')
+                attr += ` id="${element.id}"`;
+            
+            if(element.classes.length > 0) {
+                attr += ' class="';
+                element.classes.forEach((className) => {
+                    let spaceAfter = element.classes.indexOf(className) == element.classes.length - 1 ? '' : ' ';
+                    attr += className + spaceAfter;
+                });
+                attr += '"';
+            }
+
+            parsedHTML += `<${element.tag}${attr}>\n`;
+        }
     }
 
     attr = '';
@@ -53,7 +167,7 @@ module.exports.handleSelfClosingExpression = _ => {
         const space = attr == '' ? '' : ' ';
         parsedHTML += `<${expression}${attr}${space}/>\n`;
     } else {
-        throw Error(`Rim ERROR - ${expression} is not a self closing tag.`);
+        throw Error(`${expression} is not a self closing tag.`);
     }
 
     expression = '';

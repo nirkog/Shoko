@@ -1,3 +1,10 @@
-.name {
+.red {
     font-family: 'Helvetica', 'Arial', sans-serif;
+    color: red;
+}
+.big {
+    font-size: 3rem;
+}
+#header {
+    padding: 1rem;
 }
