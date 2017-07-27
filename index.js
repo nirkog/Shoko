@@ -62,15 +62,15 @@ function render(input, options={}) {
             }
 
             if(Mixin.inMixin()) {
-                Mixin.addToParsedMixin(Strings.handle());
+                Mixin.addToParsedMixin(Strings.handle(char));
             } else if(Mixin.inMixinCall()) {
-                Mixin.addToCallChain(Strings.handle());
+                Mixin.addToCallChain(Strings.handle(char));
             } else {
                 if(Strings.inString() && Strings.isEscaped()) {
                     Strings.addToChain(char); 
                     Strings.setEscaped(false);
                 } else {
-                    parsedHTML += Strings.handle();
+                    parsedHTML += Strings.handle(char);
                 }
             }
         } else if(Strings.inString()) {
@@ -171,6 +171,6 @@ function renderFile(filePath, options, fn) {
 
 //console.log(renderFile(path.join(__dirname, '../test/test.rim'), {vars: {name: 'Nir'}}, (res, d) => {console.log(res);}));
 
-module.exports.render = render;
+module.exports.render = module.exports.compile = render;
 module.exports.renderFile = renderFile;
 module.exports.reset = reset;

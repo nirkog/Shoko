@@ -67,7 +67,9 @@ To render from a file, use the renderFile function.
 
 ## Framework Integration
 
-**Currently Shoko can only be integrated with express.js, but integration with other frameworks is on the top of our TODO list.**
+### List of frameworks:
+- Express.js
+- hapi.js
 
 ### Integrating with Express.js
 
@@ -80,4 +82,28 @@ Then, you can just render views normally. For example:
 
     app.get('/', (res, req) => {
         res.render('index', {});
+    });
+
+
+### Integrating with Hapi.js
+
+Like express, integrating Shoko with Hapi is very easy;
+Just register shoko as the engine.
+
+    server.register(require('vision'), (err) => {
+        server.views({
+            engines: {
+                html: require('shoko')
+            }
+        });
+    });
+
+Then, you can just render views normally. For example:
+
+    server.route({
+        method: 'GET',
+        path: '/',
+        handler: function (request, reply) {
+            reply.view('index');
+        }
     });
