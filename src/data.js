@@ -1,6 +1,7 @@
 const Constants = require('./constants.js');
 const fs = require('fs');
 const path = require('path');
+const statements = require('./statements');
 
 function cleanData(raw) {
     let data = raw.toString().split('\r\n');
@@ -130,6 +131,8 @@ module.exports.getData = (raw, dirPath) => {
 
     data = data.join('');
 
+    let forStatementPositions = statements.checkForForStatements(data);
+
     let inString = inComment = escaped = false;
 
     let stringPositions = [];
@@ -146,12 +149,34 @@ module.exports.getData = (raw, dirPath) => {
 
                 stringCount++;
             }
-        } else if(data[i] == Constants.commentChar) {
+        } else if(data[i] == Constants.commentChar && !inString) {
             inComment = !inComment;
         } else if(data[i] == ' ') {
-            if(!inString && !inComment) {
+            let inForStatement = false;
+
+            forStatementPositions.forEach((position) => {
+                if(i >= position[0] && i < position[1]) {
+                    inForStatement = true;
+                }
+            });
+            
+            if(!inString && !inComment && !inForStatement) {
                 data = data.substr(0, i) + data.substr(i + 1);
                 i--;
+
+                stringPositions.forEach((position) => {
+                    if(i < position[1]) {
+                        position[0]--;
+                        position[1]--;
+                    }
+                });
+
+                forStatementPositions.forEach((position) => {
+                    if(i < position[1]) {
+                        position[0]--;
+                        position[1]--;
+                    }
+                });
             }
         } else if(data[i] == Constants.escapeChar) {
             escaped = true;
@@ -213,7 +238,7 @@ module.exports.getData = (raw, dirPath) => {
     indexesToClean.forEach((index) => {
         data = data.replace(data[index], '');
     });
-    
+
     return [data, doctype];
 };
 

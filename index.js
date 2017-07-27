@@ -10,6 +10,7 @@ const Expressions = require('./src/expressions');
 const Vars = require('./src/vars');
 const Comments = require('./src/comments');
 const Mixin = require('./src/mixin');
+const Statements = require('./src/statements');
 
 function render(input, options={}) {
     let parsedHTML = '';
@@ -25,17 +26,28 @@ function render(input, options={}) {
         if(char == Constants.expressionOpeningChar) {
             if(!Mixin.checkForMixin(Expressions.getExpression())) {
                 if(Mixin.inMixin()) {
-                    Mixin.addToParsedMixin(Expressions.handleOpeningChar());
+                    Mixin.addToParsedMixin(Expressions.handleOpeningChar(options));
                     Mixin.addToChainLength(1);
+                } else if(Statements.inForInLoop()) {
+                    Statements.incrementChainLength();
+                    Statements.addToContent(Expressions.handleOpeningChar(options));
                 } else {
-                    parsedHTML += Expressions.handleOpeningChar();
+                    parsedHTML += Expressions.handleOpeningChar(options);
                 }
             } else {
                 Expressions.setExpression('');
             }
         } else if(char == Constants.expressionClosingChar) {
-            if(!Mixin.inMixin()) {
+            if(!Mixin.inMixin() && !Statements.inForInLoop()) {
                 parsedHTML += Expressions.handleClosingChar();
+            } else if(Statements.inForInLoop()) {
+                Statements.decrementChainLength();
+
+                if(Statements.checkIfOver()) {
+                    parsedHTML += Statements.endLoop(options);
+                } else {
+                    Statements.addToContent(Expressions.handleClosingChar());
+                }
             } else {
                 Mixin.addToChainLength(-1);
 
@@ -65,6 +77,8 @@ function render(input, options={}) {
                 Mixin.addToParsedMixin(Strings.handle(char));
             } else if(Mixin.inMixinCall()) {
                 Mixin.addToCallChain(Strings.handle(char));
+            } else if(Statements.inForInLoop()) {
+                Statements.addToContent(Strings.handle(char));
             } else {
                 if(Strings.inString() && Strings.isEscaped()) {
                     Strings.addToChain(char); 
@@ -83,7 +97,10 @@ function render(input, options={}) {
                         Strings.setEscaped(false);
                     }
                 } else {
-                    Strings.addToChain(Vars.handle(Expressions.getChain(), options, Expressions.inAttr()));
+                    if(!Statements.inForInLoop())
+                        Strings.addToChain(Vars.handle(Expressions.getChain(), options, Expressions.inAttr()));
+                    else
+                        Strings.addToChain(char);
                 }
             } else if(Vars.inVar()) {
                 if(Strings.isEscaped())
@@ -104,8 +121,9 @@ function render(input, options={}) {
             }
             else if(Mixin.inMixinCall()) {
                 Mixin.addToCallChain(Vars.handle(Expressions.getChain(), options, Expressions.inAttr(), ''));
-            }
-            else {
+            } else if(Statements.inForInLoop()) {
+                Vars.handle(Expressions.getChain(), options, Expressions.inAttr(), data[i + 1]);
+            } else {
                 if(i == data.length - 1)
                     parsedHTML += Vars.handle(Expressions.getChain(), options, Expressions.inAttr());
                 else
@@ -156,6 +174,7 @@ function reset() {
     Mixin.reset();
     Strings.reset();
     Vars.reset();
+    Statements.reset(); 
 }
 
 function renderFile(filePath, options, fn) {

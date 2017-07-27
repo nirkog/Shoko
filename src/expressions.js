@@ -1,5 +1,6 @@
 const Constants = require('./constants.js');
 const Attr = require('./Attr.js');
+const Statements = require('./statements');
 
 let chain = [];
 let attr = expression = '';
@@ -99,7 +100,14 @@ function shorthandProperties() {
 
 module.exports.getTabs = getTabs;
 
-module.exports.handleOpeningChar = _ => {
+module.exports.handleOpeningChar = options => {
+    if(Statements.checkForForInLoop(expression, options)) {
+        attr = '';
+        expression = '';
+
+        return '';
+    }
+
     let element = shorthandProperties();
 
     chain.push(element ? element.tag : expression);

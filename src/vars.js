@@ -2,15 +2,26 @@ const Expressions = require('./expressions.js');
 const Constants = require('./constants.js');
 const Strings = require('./strings');
 const Mixin = require('./mixin');
+const Statements = require('./statements');
 
 let chain = valueChain = '';
 let inVar = inAssignment = false;
 let localVars = {};
 
 module.exports.handle = (htmlChain, options, inAttr, nextChar='') => {
+    if(Expressions.getExpression() != '') {
+        Expressions.setExpression(Expressions.getExpression() + Constants.varChar);
+        return '';
+    }
+
     inVar = !inVar;
     let parsedHTML = '';
     let found = '';
+
+    if(Statements.inForInLoop()) {
+        Statements.addToContent(chain + Constants.varChar);
+        return '';
+    }
     
     if(!inVar) {
         if(nextChar == Constants.varAssignmentChar) {

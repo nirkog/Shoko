@@ -5,7 +5,9 @@ let chain = '';
 let inComment = hidden = false;
 
 module.exports.handle = () => {
-    if(!inComment && Expressions.getExpression() != '') {
+    if(Expressions.inAttr()) {
+        Expressions.setAttr(Expressions.getAttr() + Constants.commentChar);
+    } else if(!inComment && Expressions.getExpression() != '') {
         Expressions.setExpression(Expressions.getExpression() + Constants.commentChar);
         return '';
     }

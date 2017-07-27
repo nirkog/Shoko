@@ -1,10 +1,22 @@
-.red {
-    font-family: 'Helvetica', 'Arial', sans-serif;
-    color: red;
+.nav-container {
+    margin: 0;
+    padding: 0;
+    background-color: #3182e3;
 }
-.big {
-    font-size: 3rem;
+.nav-list {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    display: flex;
 }
-#header {
-    padding: 1rem;
+.nav-list li a:hover {
+    background-color: #2656c6;
+}
+.nav-list li a {
+    display: block;
+    padding: 0.8rem 1.2rem;
+    font-family: 'Helvetica', sans-serif;
+    font-size: 1.125rem;
+    color: white;
+    text-decoration: none;
 }

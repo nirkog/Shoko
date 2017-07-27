@@ -229,12 +229,11 @@ getFile(path.join(testPath, inputFileName))
         if(err)
             console.log(err);
 
-        const options = {name: 'Avi Nimni'};
+        const options = {links: ['Home', 'About', 'API', 'Getting Started']};
         const date = new Date();
         let newFile = '', oldFile = res.toString();
 
         let startTime = date.getTime();
-
 
         let data = shoko.render(oldFile, options);
         let renderingTime = {time: date.getTime(), timeToRender: date.getTime() - startTime};
