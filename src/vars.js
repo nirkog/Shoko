@@ -14,6 +14,9 @@ module.exports.handle = (htmlChain, options, inAttr, nextChar='') => {
     
     if(!inVar) {
         if(nextChar == Constants.varAssignmentChar) {
+            if(chain in localVars || options.hasOwnProperty(chain)) {
+                throw new Error(`variable ${chain} already exists.`);
+            }
             inAssignment = true;
             return '';
         }

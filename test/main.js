@@ -230,9 +230,23 @@ getFile(path.join(testPath, inputFileName))
             console.log(err);
 
         const options = {name: 'Avi Nimni'};
+        const date = new Date();
         let newFile = '', oldFile = res.toString();
+
+        let startTime = date.getTime();
+
+
         let data = shoko.render(oldFile, options);
+        let renderingTime = {time: date.getTime(), timeToRender: date.getTime() - startTime};
+
         fs.writeFile(path.join(testPath, outputFileName), data);
+        let writingTime = date.getTime() - renderingTime.time;
+
+        let totalTime = renderingTime.timeToRender + writingTime;
+
+        console.log(`Rendering time: ${renderingTime.timeToRender} ms.`.yellow);
+        console.log(`Writing time: ${writingTime} ms.`.yellow);
+        console.log(`Total time: ${totalTime} ms.`.yellow);
 
         setInterval(() => {
             getFile(path.join(testPath, inputFileName))
@@ -243,8 +257,20 @@ getFile(path.join(testPath, inputFileName))
                         console.log('updating file...'.rainbow);
 
                         oldFile = newFile;
+
+                        startTime = date.getTime();
+
                         data = shoko.render(newFile, options);
+                        renderingTime = {time: date.getTime(), timeToRender: date.getTime() - startTime};
+
                         fs.writeFile(path.join(testPath, outputFileName), data);
+                        writingTime = date.getTime() - renderingTime.time;
+
+                        totalTime = renderingTime.timeToRender + writingTime;
+
+                        console.log(`Rendering time: ${renderingTime.timeToRender} ms.`.yellow);
+                        console.log(`Writing time: ${writingTime} ms.`.yellow);
+                        console.log(`Total time: ${totalTime} ms.`.yellow);
                     }
                 })
                 .catch(err => {
@@ -253,6 +279,7 @@ getFile(path.join(testPath, inputFileName))
         }, 500);
     })
     .catch((err) => {
+        shoko.reset();
         console.log(err);
     });
 

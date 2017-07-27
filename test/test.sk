@@ -3,13 +3,13 @@ html {
     head {
         title {
             'Shoko'
-         }
+        }
         
         link[rel="stylesheet", href="style.css"];
     }
     
     body {
-        h1.red.big#header {
+        h1.red.big#header[style="margin: 10rem;"] {
             'What\'s up, @name@'
         }
     }

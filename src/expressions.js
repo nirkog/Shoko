@@ -32,6 +32,10 @@ function shorthandProperties() {
         let id = '';
         let currentPorperty = '';
 
+        if(tag == '') {
+            tag = Constants.defaultShorthandElement;
+        }
+
         for(let i = 0; i < properties.length; i++) {
             let char = properties[i];
 

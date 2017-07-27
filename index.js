@@ -52,6 +52,8 @@ function render(input, options={}) {
 
             if(Mixin.inMixin())
                 Mixin.addToParsedMixin(Expressions.handleSelfClosingExpression());
+            else if(Expressions.inAttr())
+                Expressions.setAttr(Expressions.getAttr() + char);
             else
                 parsedHTML += Expressions.handleSelfClosingExpression();
         } else if((char == '\'' || char == '"') && !Expressions.inAttr() && !Comments.inComment()) {
@@ -171,3 +173,4 @@ function renderFile(filePath, options, fn) {
 
 module.exports.render = render;
 module.exports.renderFile = renderFile;
+module.exports.reset = reset;
