@@ -229,7 +229,7 @@ getFile(path.join(testPath, inputFileName))
         if(err)
             console.log(err);
 
-        const options = {links: ['Home', 'About', 'API', 'Getting Started']};
+        const options = {message: 'Hello world'};
         const date = new Date();
         let newFile = '', oldFile = res.toString();
 

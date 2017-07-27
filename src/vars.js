@@ -112,6 +112,20 @@ module.exports.handle = (htmlChain, options, inAttr, nextChar='') => {
     return parsedHTML;
 };
 
+function searchVarInLocalVars(name) {
+    for(variable in localVars) {
+        if(localVars.hasOwnProperty(variable)) {
+            if(variable === name) {
+                return localVars[variable];
+            }
+        }
+    }
+
+    return null;
+}
+
+module.exports.searchVarInLocalVars = searchVarInLocalVars;
+
 module.exports.endAssignment = () => {
     valueChain = valueChain.slice(1, valueChain.length);
 

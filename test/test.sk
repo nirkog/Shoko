@@ -9,18 +9,8 @@ html {
     }
     
     body[style="margin: 0;"] {
-        .nav-container {
-            nav.nav {
-                ul.nav-list {
-                    for(link in @links@) {
-                        li { 
-                            a[href="https://github.com/nirkog/shoko"] {
-                                @link@ 
-                            }
-                        }
-                    }
-                }
-            }
+        h2.red.header#h {
+            @message@
         }
     }
 }

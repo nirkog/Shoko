@@ -1,4 +1,5 @@
 const Constants = require('./constants');
+const Vars = require('./vars');
 
 let iterator, iteratedArray;
 let parsedContent = '';
@@ -92,6 +93,10 @@ function endLoop(options) {
                                 }
                             }
                         }
+
+                        let localVar = Vars.searchVarInLocalVars(varChain);
+                        if(localVar)
+                            parsed += localVar; 
                     }
                 }
             } else if(inVar) {

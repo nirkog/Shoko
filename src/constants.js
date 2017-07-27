@@ -9,7 +9,7 @@ module.exports = {
     varChar: '@',
     varAssignmentChar: '=',
     endOfVarAssignmentChar: ';',
-    commentChar: '#',
+    commentChar: '*',
     hiddenCommentChar: '!',
     mixinChar: '+',
     mixinKeyword: 'mixin',

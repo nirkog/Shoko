@@ -1,22 +1,9 @@
-.nav-container {
-    margin: 0;
-    padding: 0;
-    background-color: #3182e3;
+.red {
+    color: red;
 }
-.nav-list {
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
-    display: flex;
+.header {
+    font-size: 3.2rem;
 }
-.nav-list li a:hover {
-    background-color: #2656c6;
-}
-.nav-list li a {
-    display: block;
-    padding: 0.8rem 1.2rem;
-    font-family: 'Helvetica', sans-serif;
-    font-size: 1.125rem;
-    color: white;
-    text-decoration: none;
+#h {
+    padding: 10rem;
 }
