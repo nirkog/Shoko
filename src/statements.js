@@ -1,5 +1,6 @@
 const Constants = require('./constants');
 const Vars = require('./vars');
+const Expressions = require('./expressions');
 
 let iterator, iteratedArray;
 let parsedContent = '';
@@ -42,6 +43,21 @@ function findVar(name, options) {
     return null;
 }
 
+function parseArray(array) {
+    let result = [];
+    
+    array = array.slice(0, array.length);
+    array = array.split(' ').join('').split(',');
+    
+    array.forEach((item) => {
+        result.push(item);
+    });
+
+    console.log(result);
+
+    return result;
+}
+
 module.exports.checkForForInLoop = (expression, options) => {
     if(expression.slice(0, Constants.forInKeywords[0].length) == Constants.forInKeywords[0]) {
         if(expression[Constants.forInKeywords[0].length] == Constants.parentheses[0]) {
@@ -54,9 +70,12 @@ module.exports.checkForForInLoop = (expression, options) => {
 
                 inForInLoop = true;
 
-                if(!iteratedArray)
-                    throw new Error(`${iteratedArray} is not an array.`);
-                else if(!Array.isArray(iteratedArray))
+                if(!iteratedArray) {
+                    iteratedArray = parseArray(Expressions.getAttr());
+
+                    if(!iteratedArray)
+                        throw new Error(`${iteratedArray} is not an array.`);
+                } else if(!Array.isArray(iteratedArray))
                     throw new Error(`${iteratedArray} is not an array.`);
 
                 return true;

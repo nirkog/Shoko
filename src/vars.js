@@ -1,5 +1,5 @@
-const Expressions = require('./expressions.js');
-const Constants = require('./constants.js');
+const Expressions = require('./expressions');
+const Constants = require('./constants');
 const Strings = require('./strings');
 const Mixin = require('./mixin');
 const Statements = require('./statements');

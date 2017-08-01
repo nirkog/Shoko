@@ -9,8 +9,12 @@ html {
     }
     
     body[style="margin: 0;"] {
-        h2.red.header#h {
-            @message@
+        ul {
+            for(item in [key, door]) {
+                li {
+                    @item@
+                }
+            }
         }
     }
 }

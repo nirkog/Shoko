@@ -1,7 +1,8 @@
-const Constants = require('./constants.js');
+const Constants = require('./constants');
+const statements = require('./statements');
+
 const fs = require('fs');
 const path = require('path');
-const statements = require('./statements');
 
 function cleanData(raw) {
     let data = raw.toString().split('\r\n');

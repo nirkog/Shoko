@@ -1,5 +1,5 @@
-const Constants = require('./constants.js');
-const Attr = require('./Attr.js');
+const Constants = require('./constants');
+const Attr = require('./attr');
 const Statements = require('./statements');
 
 let chain = [];
@@ -112,11 +112,12 @@ module.exports.handleOpeningChar = options => {
 
     chain.push(element ? element.tag : expression);
 
+    attr = Attr.parseAttr(attr);
     let tabs = getTabs();
     let parsedHTML = tabs;
 
     if(selfClosingElements.indexOf(expression) >= 0) {
-        const space = attr == '' ? '' : ' ';
+        const space = attr == ' ' ? '' : ' ';
         if(!element) {
             parsedHTML += `<${expression}${attr}${space}/>\n`;
         } else {
@@ -135,6 +136,7 @@ module.exports.handleOpeningChar = options => {
             parsedHTML += `<${element.tag}${attr}${space}/>\n`;
         }
     } else {
+        attr = attr == ' ' ? '' : attr;
         if(!element) {
             parsedHTML += `<${expression}${attr}>\n`;
         } else {
@@ -149,7 +151,7 @@ module.exports.handleOpeningChar = options => {
                 });
                 attr += '"';
             }
-
+            
             parsedHTML += `<${element.tag}${attr}>\n`;
         }
     }
@@ -173,6 +175,7 @@ module.exports.handleClosingChar = _ => {
 };
 
 module.exports.handleSelfClosingExpression = _ => {
+    attr = Attr.parseAttr(attr);
     let parsedHTML = getTabs() + Constants.tab;
 
     if(selfClosingElements.indexOf(expression) >= 0) {
@@ -194,8 +197,6 @@ module.exports.handleOpeningAttr = _ => {
 
 module.exports.handleClosingAtrr = _ => {
     inAttr = false;
-
-    attr = Attr.parseAttr(attr);
 };
 
 module.exports.setAttr = (a) => {attr = a};

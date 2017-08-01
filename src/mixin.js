@@ -1,5 +1,5 @@
-const Constants = require('./constants.js');
-const Expressions = require('./expressions.js');
+const Constants = require('./constants');
+const Expressions = require('./expressions');
 
 let mixins = {};
 let inMixin = inCall = false;
