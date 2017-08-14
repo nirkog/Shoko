@@ -28,7 +28,7 @@ function render(input, options={}) {
                 if(Mixin.inMixin()) {
                     Mixin.addToParsedMixin(Expressions.handleOpeningChar(options));
                     Mixin.addToChainLength(1);
-                } else if(Statements.inForInLoop()) {
+                } else if(Statements.inStatement()) {
                     Statements.incrementChainLength();
                     Statements.addToContent(Expressions.handleOpeningChar(options));
                 } else {
@@ -38,13 +38,13 @@ function render(input, options={}) {
                 Expressions.setExpression('');
             }
         } else if(char == Constants.expressionClosingChar) {
-            if(!Mixin.inMixin() && !Statements.inForInLoop()) {
+            if(!Mixin.inMixin() && !Statements.inStatement()) {
                 parsedHTML += Expressions.handleClosingChar();
-            } else if(Statements.inForInLoop()) {
+            } else if(Statements.inStatement()) {
                 Statements.decrementChainLength();
 
                 if(Statements.checkIfOver()) {
-                    parsedHTML += Statements.endLoop(options);
+                    parsedHTML += Statements.endStatement(options);
                 } else {
                     Statements.addToContent(Expressions.handleClosingChar());
                 }
@@ -77,7 +77,7 @@ function render(input, options={}) {
                 Mixin.addToParsedMixin(Strings.handle(char));
             } else if(Mixin.inMixinCall()) {
                 Mixin.addToCallChain(Strings.handle(char));
-            } else if(Statements.inForInLoop()) {
+            } else if(Statements.inStatement()) {
                 Statements.addToContent(Strings.handle(char));
             } else {
                 if(Strings.inString() && Strings.isEscaped()) {
@@ -97,10 +97,11 @@ function render(input, options={}) {
                         Strings.setEscaped(false);
                     }
                 } else {
-                    if(!Statements.inForInLoop())
+                    if(!Statements.inForInLoop()) {
                         Strings.addToChain(Vars.handle(Expressions.getChain(), options, Expressions.inAttr()));
-                    else
+                    } else {
                         Strings.addToChain(char);
+                    }
                 }
             } else if(Vars.inVar()) {
                 if(Strings.isEscaped())
@@ -121,7 +122,7 @@ function render(input, options={}) {
             }
             else if(Mixin.inMixinCall()) {
                 Mixin.addToCallChain(Vars.handle(Expressions.getChain(), options, Expressions.inAttr(), ''));
-            } else if(Statements.inForInLoop()) {
+            } else if(Statements.inStatement()) {
                 Vars.handle(Expressions.getChain(), options, Expressions.inAttr(), data[i + 1]);
             } else {
                 if(i == data.length - 1)

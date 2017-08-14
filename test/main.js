@@ -22,7 +22,7 @@ function getFile(path) {
 async function run() {
     let oldFile = await getFile(path.join(testPath, inputFileName));
     oldFile = oldFile.toString();
-    const options = {list: ['Avi', 'Rona', 'Tamuya', 'Habib']};
+    const options = {condition: ['hello', 'world'], otherVar: 5};
     let newFile = '';
 
     let data = shoko.render(oldFile, options);
@@ -48,61 +48,3 @@ async function run() {
 }
 
 run();
-
-/* getFile(path.join(testPath, inputFileName))
-    .then((res, err) => {
-        if(err)
-            console.log(err);
-
-        const options = {message: 'Hello world'};
-        const date = new Date();
-        let newFile = '', oldFile = res.toString();
-
-        let startTime = date.getTime();
-
-        let data = shoko.render(oldFile, options);
-        let renderingTime = {time: date.getTime(), timeToRender: date.getTime() - startTime};
-
-        fs.writeFile(path.join(testPath, outputFileName), data);
-        let writingTime = date.getTime() - renderingTime.time;
-
-        let totalTime = renderingTime.timeToRender + writingTime;
-
-        console.log(`Rendering time: ${renderingTime.timeToRender} ms.`.yellow);
-        console.log(`Writing time: ${writingTime} ms.`.yellow);
-        console.log(`Total time: ${totalTime} ms.`.yellow);
-
-        setInterval(() => {
-            getFile(path.join(testPath, inputFileName))
-                .then((res, err) => {
-                    newFile = res.toString();
-
-                    if(newFile != oldFile) {
-                        console.log('updating file...'.rainbow);
-
-                        oldFile = newFile;
-
-                        startTime = date.getTime();
-
-                        data = shoko.render(newFile, options);
-                        renderingTime = {time: date.getTime(), timeToRender: date.getTime() - startTime};
-
-                        fs.writeFile(path.join(testPath, outputFileName), data);
-                        writingTime = date.getTime() - renderingTime.time;
-
-                        totalTime = renderingTime.timeToRender + writingTime;
-
-                        console.log(`Rendering time: ${renderingTime.timeToRender} ms.`.yellow);
-                        console.log(`Writing time: ${writingTime} ms.`.yellow);
-                        console.log(`Total time: ${totalTime} ms.`.yellow);
-                    }
-                })
-                .catch(err => {
-                    console.log(err);
-                });
-        }, 500);
-    })
-    .catch((err) => {
-        shoko.reset();
-        console.log(err);
-    }); */

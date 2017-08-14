@@ -33,5 +33,7 @@ module.exports = {
     },
     defaultShorthandElement: 'div',
     forInKeywords: ['for', 'in'],
+    ifKeyword: 'if',
+    ifOperators: ['==', '<=', '>=', '!=', '>', '<', '==='],
     parentheses: ['(', ')']
 };

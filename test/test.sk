@@ -8,12 +8,10 @@ html {
         link[rel="stylesheet", href="style.css"];
     }
     
-    body[style="margin: 0;"] {
-        ul {
-            for(item in [key, door]) {
-                li {
-                    @item@
-                }
+    body {
+        if(@condition@ == ['hello', 'world', 'hi']) {
+            h1 {
+                'The message is: Hi'
             }
         }
     }

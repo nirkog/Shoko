@@ -10,6 +10,13 @@ module.exports.handle = (char) => {
     inString = !inString;
 
     if(!inString) {
+
+        if(Expressions.getExpression() != '') {
+            Expressions.addToExpression("'" + chain + "'");
+            chain = '';
+            return '';
+        }
+
         if(currentStringChar == char) {
             let tabs = Mixin.inMixinCall() ? '' : Expressions.getTabs() + Constants.tab;
             parsedHTML += `${tabs}${chain}\r\n`;

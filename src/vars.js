@@ -19,6 +19,8 @@ module.exports.handle = (htmlChain, options, inAttr, nextChar='') => {
     let found = '';
 
     if(Statements.inForInLoop()) {
+        chain = '';
+
         Statements.addToContent(chain + Constants.varChar);
         return '';
     }
@@ -64,8 +66,6 @@ module.exports.handle = (htmlChain, options, inAttr, nextChar='') => {
                         } else {
                             parsedHTML += `${localVars[variable]}`;
                         }
-
-                        return parsedHTML;
                     } else {
                         Expressions.setAttr(Expressions.getAttr() + localVars[variable]);
                     }
@@ -107,6 +107,11 @@ module.exports.handle = (htmlChain, options, inAttr, nextChar='') => {
         }
 
         chain = '';
+    }
+
+    if(Statements.inIfStatement() && !Strings.inString()) {
+        Statements.addToContent(parsedHTML);
+        return '';
     }
     
     return parsedHTML;
