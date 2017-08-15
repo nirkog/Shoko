@@ -3,7 +3,6 @@ const path = require('path');
 const colors = require('colors');
 
 const Data = require('./src/data');
-const Attr = require('./src/attr');
 const Constants = require('./src/constants');
 const Strings = require('./src/strings');
 const Expressions = require('./src/expressions');

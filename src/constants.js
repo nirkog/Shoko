@@ -35,5 +35,6 @@ module.exports = {
     forInKeywords: ['for', 'in'],
     ifKeyword: 'if',
     ifOperators: ['==', '<=', '>=', '!=', '>', '<', '==='],
+    logicOperators: ['!', '&&', '||'],
     parentheses: ['(', ')']
 };

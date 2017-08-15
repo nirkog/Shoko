@@ -1,11 +1,19 @@
 const Constants = require('./constants');
-const Attr = require('./attr');
 const Statements = require('./statements');
+const Data = require('./data');
 
 let chain = [];
 let attr = expression = '';
 const selfClosingElements = Constants.selfClosingElements;
 let inAttr = false;
+
+function parseAttr(raw) {
+    let attrs = Data.cleanData(raw).split(',').join(' ');
+    
+    attrs = ' ' + attrs;
+    
+    return attrs;
+}
 
 function getTabs() {
     let tabs = '';
@@ -112,7 +120,7 @@ module.exports.handleOpeningChar = options => {
 
     chain.push(element ? element.tag : expression);
 
-    attr = Attr.parseAttr(attr);
+    attr = parseAttr(attr);
     let tabs = getTabs();
     let parsedHTML = tabs;
 
@@ -175,7 +183,7 @@ module.exports.handleClosingChar = _ => {
 };
 
 module.exports.handleSelfClosingExpression = _ => {
-    attr = Attr.parseAttr(attr);
+    attr = parseAttr(attr);
     let parsedHTML = getTabs() + Constants.tab;
 
     if(selfClosingElements.indexOf(expression) >= 0) {
