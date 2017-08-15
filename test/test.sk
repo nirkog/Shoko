@@ -6,13 +6,26 @@ html {
         }
         
         link[rel="stylesheet", href="style.css"];
+        link[href="https://fonts.googleapis.com/icon?family=Material+Icons", rel="stylesheet"];
     }
     
     body {
-        if(@condition@ == ['hello', 'world', 'hi']) {
-            h1 {
-                'The message is: Hi'
+        if(@error@) {
+            div.alert-container.alert-error {
+                'Error - invalid email or password!'
+                i.material-icons.cancel-btn {
+                    'cancel'
+                }
+            }
+        } else {
+            div.alert-container.alert-success {
+                'You have successfully signed in!'
+                i.material-icons.cancel-btn {
+                    'cancel'
+                }
             }
         }
+
+        script[src="signin.js"] {}
     }
 }

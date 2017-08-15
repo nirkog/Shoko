@@ -5,7 +5,8 @@ const Data = require('./data');
 let chain = [];
 let attr = expression = '';
 const selfClosingElements = Constants.selfClosingElements;
-let inAttr = false;
+let inAttr = inScript = false;
+let scriptChainLength = 0;
 
 function parseAttr(raw) {
     let attrs = Data.cleanData(raw).split(',').join(' ');
@@ -114,6 +115,17 @@ module.exports.handleOpeningChar = options => {
         expression = '';
 
         return '';
+    } else if(Statements.inIfStatement() && Statements.checkIfOver()) {
+        if(expression == Constants.elseKeyword) {
+            attr = '';
+            expression = '';
+
+            Statements.enterElseStatement();
+
+            return '';
+        } else {
+            Statements.reset();
+        }
     }
 
     let element = shorthandProperties();
@@ -164,6 +176,9 @@ module.exports.handleOpeningChar = options => {
         }
     }
 
+    if(expression == 'script')
+        inScript = true;
+
     attr = '';
     expression = '';
 
@@ -174,6 +189,9 @@ module.exports.handleClosingChar = _ => {
     let parsedHTML = getTabs();
 
     if(selfClosingElements.indexOf(chain[chain.length - 1]) >= 0) {
+        if(inScript)
+            inScript = false;
+
         chain.pop();
     } else {
         parsedHTML += `</${chain.pop()}>\n`;
@@ -218,6 +236,8 @@ module.exports.setAttr = (a) => {attr = a};
 module.exports.getAttr = _ => {
     return attr;
 };
+
+module.exports.inScript = () => inScript;
 
 module.exports.getChain = _ => { return chain; };
 

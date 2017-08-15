@@ -5,7 +5,7 @@ const isNumber = require('is-number');
 
 let iterator, iteratedArray;
 let parsedContent = '';
-let inForInLoop = inIfStatement = ifCondition = inStatement  = false;
+let inForInLoop = inIfStatement = ifCondition = inStatement = inElse = false;
 let chainLength = 0;
 
 module.exports.checkForForStatements = (data) => {
@@ -113,9 +113,15 @@ module.exports.checkForIfStatement = (expression, options) => {
             ifCondition = false;
             inIfStatement = true;
             inStatement = true;
+
+           /*  for(let op of Constants.logicOperators) {
+                if(condition.indexOf(op) != -1) {
+
+                }
+            } */
             
             for(let op of Constants.ifOperators) {
-                if(expression.indexOf(op) != -1) {
+                if(condition.indexOf(op) != -1) {
                     operator = op;
                     break;
                 }
@@ -185,6 +191,15 @@ module.exports.checkForIfStatement = (expression, options) => {
 
     return false;
 }
+
+module.exports.enterElseStatement = () => {
+    inElse = true;
+    inIfStatement = false;
+    chainLength = 0;
+    parsedContent = '';
+
+
+};
 
 function findVar(name, options) {
     for(let key in options) {
@@ -287,10 +302,21 @@ function endForInLoop(options) {
     return parsedHTML;
 }
 
-function endIfStatement(options) {
+function endIfStatement() {
     let parsedHTML = '';
 
     if(ifCondition)
+        parsedHTML = parsedContent;
+
+    //module.exports.reset();
+
+    return parsedHTML;
+}
+
+function endElseStatement() {
+    let parsedHTML = '';
+
+    if(!ifCondition)
         parsedHTML = parsedContent;
 
     module.exports.reset();
@@ -321,7 +347,9 @@ module.exports.decrementChainLength = () => chainLength--;
 
 module.exports.endStatement = (options) => {
     if(inForInLoop)
-        return endForInLoop();
+        return endForInLoop(options);
     else if(inIfStatement)
         return endIfStatement();
+    else if(inElse)
+        return endElseStatement();
 };

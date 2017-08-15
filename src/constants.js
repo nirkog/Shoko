@@ -1,5 +1,5 @@
 module.exports = {
-    selfClosingElements: ['img', 'br', 'i', 'area', 'base', 'col', 'comman', 'embed', 'hr', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'],
+    selfClosingElements: ['img', 'br', 'area', 'base', 'col', 'comman', 'embed', 'hr', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'],
     lists: ['ul', 'ol'],
     expressionOpeningChar: '{',
     expressionClosingChar: '}',
@@ -34,6 +34,7 @@ module.exports = {
     defaultShorthandElement: 'div',
     forInKeywords: ['for', 'in'],
     ifKeyword: 'if',
+    elseKeyword: 'else',
     ifOperators: ['==', '<=', '>=', '!=', '>', '<', '==='],
     logicOperators: ['!', '&&', '||'],
     parentheses: ['(', ')']

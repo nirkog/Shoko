@@ -27,7 +27,7 @@ function render(input, options={}) {
                 if(Mixin.inMixin()) {
                     Mixin.addToParsedMixin(Expressions.handleOpeningChar(options));
                     Mixin.addToChainLength(1);
-                } else if(Statements.inStatement()) {
+                } else if(Statements.inStatement() && !Statements.checkIfOver()) {
                     Statements.incrementChainLength();
                     Statements.addToContent(Expressions.handleOpeningChar(options));
                 } else {
