@@ -30,6 +30,8 @@ function render(input, options={}) {
                 } else if(Statements.inStatement() && !Statements.checkIfOver()) {
                     Statements.incrementChainLength();
                     Statements.addToContent(Expressions.handleOpeningChar(options));
+                } else if(Comments.inComment()) {
+                    Comments.addToChain(char);
                 } else {
                     parsedHTML += Expressions.handleOpeningChar(options);
                 }
@@ -38,7 +40,10 @@ function render(input, options={}) {
             }
         } else if(char == Constants.expressionClosingChar) {
             if(!Mixin.inMixin() && !Statements.inStatement()) {
-                parsedHTML += Expressions.handleClosingChar();
+                if(Comments.inComment())
+                    Comments.addToChain(char); 
+                else
+                    parsedHTML += Expressions.handleClosingChar();
             } else if(Statements.inStatement()) {
                 Statements.decrementChainLength();
 
@@ -65,6 +70,8 @@ function render(input, options={}) {
                 Mixin.addToParsedMixin(Expressions.handleSelfClosingExpression());
             else if(Expressions.inAttr())
                 Expressions.setAttr(Expressions.getAttr() + char);
+            else if(Comments.inComment())
+                Comments.addToChain(char);
             else
                 parsedHTML += Expressions.handleSelfClosingExpression();
         } else if((char == '\'' || char == '"') && !Expressions.inAttr() && !Comments.inComment()) {
@@ -78,6 +85,8 @@ function render(input, options={}) {
                 Mixin.addToCallChain(Strings.handle(char));
             } else if(Statements.inStatement()) {
                 Statements.addToContent(Strings.handle(char));
+            } else if(Comments.inComment()) {
+                Comments.addToChain(char);
             } else {
                 if(Strings.inString() && Strings.isEscaped()) {
                     Strings.addToChain(char); 
@@ -123,6 +132,8 @@ function render(input, options={}) {
                 Mixin.addToCallChain(Vars.handle(Expressions.getChain(), options, Expressions.inAttr(), ''));
             } else if(Statements.inStatement()) {
                 Vars.handle(Expressions.getChain(), options, Expressions.inAttr(), data[i + 1]);
+            } else if(Comments.inComment()) {
+                Comments.addToChain(char);
             } else {
                 if(i == data.length - 1)
                     parsedHTML += Vars.handle(Expressions.getChain(), options, Expressions.inAttr());
@@ -138,9 +149,15 @@ function render(input, options={}) {
         } else if(Vars.inAssignment()) {
             Vars.addToValueChain(char);
         } else if(char == Constants.attrOpeningChar) {
-            Expressions.handleOpeningAttr();
+            if(Comments.inComment())
+                Comments.addToChain(char);
+            else
+                Expressions.handleOpeningAttr();
         } else if(char == Constants.attrClosingChar) {
-            Expressions.handleClosingAtrr();
+            if(Expressions.inAttr())
+                Expressions.handleClosingAtrr();
+            else if(Comments.inComment())
+                Comments.addToChain(char);
         } else if(Expressions.inAttr()) {
             Expressions.setAttr(Expressions.getAttr() + char);
         } else if(char == Constants.commentChar) {
@@ -153,6 +170,8 @@ function render(input, options={}) {
         } else if(char == Constants.mixinChar) {
             if(!Mixin.inMixinCall()) {
                 Mixin.startMixinCall();
+            } else if(Comments.inComment()) {
+                Comments.addToChain(char);
             } else {
                 parsedHTML += Mixin.endMixinCall();
             }

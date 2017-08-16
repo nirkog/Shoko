@@ -22,7 +22,7 @@ function getFile(path) {
 async function run() {
     let oldFile = await getFile(path.join(testPath, inputFileName));
     oldFile = oldFile.toString();
-    const options = {error: true};
+    const options = {error: false};
     let newFile = '';
 
     let data = shoko.render(oldFile, options);
