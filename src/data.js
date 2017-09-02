@@ -89,7 +89,7 @@ function handleEmptyLines(data) {
     });
 }
 
-module.exports.getData = (raw, dirPath) => {
+module.exports.getData = (raw, dirPath, defaultDoctype) => {
     let data = raw.split('\r\n');
     
     let doctype = handleDoctype(data[0]);
@@ -125,7 +125,10 @@ module.exports.getData = (raw, dirPath) => {
             data[0] = data[0].slice(data[0].indexOf(';') + 1, data[0].length);
         }
     } else {
-        doctype = Constants.doctypes['html'] + '\n';
+        if(defaultDoctype)
+            doctype = Constants.doctypes['html'] + '\n';
+        else
+            doctype = '';
     }
 
     handleEmptyLines(data);
@@ -213,8 +216,7 @@ module.exports.getData = (raw, dirPath) => {
                 endIndex = i;
                 break;
             }
-            importFile += data[i];
-        }
+         }
 
         let statement = data.slice(startIndex, endIndex + 1);
 
@@ -239,6 +241,8 @@ module.exports.getData = (raw, dirPath) => {
     indexesToClean.forEach((index) => {
         data = data.replace(data[index], '');
     });
+
+    //console.log(data);
 
     return [data, doctype];
 };

@@ -11,11 +11,11 @@ const Comments = require('./src/comments');
 const Mixin = require('./src/mixin');
 const Statements = require('./src/statements');
 
-function render(input, options={}) {
+function render(input, options={}, defaultDoctype=true) {
     let parsedHTML = '';
     const selfClosingElements = Constants.selfClosingElements;
 
-    const combinedDataParsed = Data.getData(input, __dirname);
+    const combinedDataParsed = Data.getData(input, __dirname, defaultDoctype);
     let data = combinedDataParsed[0];
     parsedHTML += combinedDataParsed[1];
 
@@ -206,8 +206,6 @@ function renderFile(filePath, options, fn) {
         fn(err, result);
     });
 }
-
-//console.log(renderFile(path.join(__dirname, '../test/test.rim'), {vars: {name: 'Nir'}}, (res, d) => {console.log(res);}));
 
 module.exports.render = module.exports.compile = render;
 module.exports.renderFile = renderFile;

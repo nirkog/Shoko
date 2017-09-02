@@ -123,6 +123,11 @@ module.exports.handleOpeningChar = options => {
             Statements.enterElseStatement();
 
             return '';
+        } else if(Statements.checkForElseIfStatement(expression, options)) {
+            attr = '';
+            expression = '';
+
+            return '';
         } else {
             Statements.reset();
         }

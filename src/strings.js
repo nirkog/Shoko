@@ -19,7 +19,7 @@ module.exports.handle = (char) => {
 
         if(currentStringChar == char) {
             let tabs = Mixin.inMixinCall() ? '' : Expressions.getTabs() + Constants.tab;
-            parsedHTML += `${tabs}${chain}\r\n`;
+            parsedHTML += `${tabs}${chain}\n`;
         } else {
             inString = !inString;
             chain += char;

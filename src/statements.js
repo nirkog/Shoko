@@ -5,7 +5,8 @@ const isNumber = require('is-number');
 
 let iterator, iteratedArray;
 let parsedContent = '';
-let inForInLoop = inIfStatement = ifCondition = inStatement = inElse = false;
+let inForInLoop = inIfStatement = ifCondition = elseIfCondition = inStatement = inElse = inElseIf = false;
+let ifOrElseIfTrue = false;
 let chainLength = 0;
 
 module.exports.checkForForStatements = (data) => {
@@ -30,6 +31,22 @@ module.exports.checkForForStatements = (data) => {
     }
 
     return positions;
+};
+
+module.exports.checkForElseIfStatement = (expression, options) => {
+    if(expression.slice(0, Constants.ifKeyword.length + Constants.elseKeyword.length) == Constants.elseKeyword + Constants.ifKeyword) {
+        if(expression[Constants.ifKeyword.length + Constants.elseKeyword.length] == Constants.parentheses[0] && expression[expression.length - 1] == Constants.parentheses[1]) {
+            elseIfCondition = checkStatement(expression, options, false);  
+            enterElseIfStatement();
+
+            if(elseIfCondition && !ifOrElseIfTrue)
+                ifOrElseIfTrue = true;
+
+            return true;
+        }
+    }
+
+    return false;
 };
 
 module.exports.quickIfStatementCheck = (expression) => {
@@ -103,87 +120,92 @@ function compareArrays(arr1, arr2) {
     return false;
 }
 
+function checkStatement(expression, options, ifStatement=true) {
+    let condition = expression.slice(ifStatement ? Constants.ifKeyword.length + 1 : Constants.elseKeyword.length + Constants.ifKeyword.length + 1, expression.length - 1);
+    let operator = null;
+    let sides = [];
+    
+    let ifCondition = false;
+    
+    for(let op of Constants.ifOperators) {
+        if(condition.indexOf(op) != -1) {
+            operator = op;
+            break;
+        }
+    }
+
+    if(!operator) {
+        sides.push(parseSide(condition, options));
+
+        if(sides[0] != false && sides[0] != true) {
+            operator = '!=';
+            sides.push(null);
+        } else {
+            operator = '==';
+            sides.push(true);
+        }
+    } else {
+        sides.push(parseSide(condition.slice(0, condition.indexOf(operator)), options));
+        sides.push(parseSide(condition.slice(condition.indexOf(operator) + operator.length, condition.length), options));
+    }
+
+    switch(operator) {
+        case '==':
+            if(sides[0] == sides[1]) 
+                ifCondition = true;
+            else if(Array.isArray(sides[0]) && Array.isArray(sides[1])) {
+                if(compareArrays(sides[0], sides[1]))
+                    ifCondition = true;
+            }
+            break;
+        case '!=':
+            if(Array.isArray(sides[0]) && Array.isArray(sides[1])) {
+                if(!compareArrays(sides[0], sides[1]))
+                    ifCondition = true;
+            }
+            else if(sides[0] != sides[1])
+                ifCondition = true;
+            break;
+        case '===':
+            if(sides[0] === sides[1])
+                ifCondition = true;
+            else if(Array.isArray(sides[0]) && Array.isArray(sides[1])) {
+                if(compareArrays(sides[0], sides[1]))
+                    ifCondition = true;
+            }
+            break;
+        case '>':
+            if(sides[0] > sides[1])
+                ifCondition = true;
+            break;
+        case '<':
+            if(sides[0] < sides[1])
+                ifCondition = true;
+            break;
+        case '>=':
+            if(sides[0] >= sides[1])
+                ifCondition = true;
+            break;
+        case '<=':
+            if(sides[0] <= sides[1])
+                ifCondition = true;
+            break;
+    }
+
+    return ifCondition;
+}
+
 module.exports.checkForIfStatement = (expression, options) => {
     if(expression.slice(0, Constants.ifKeyword.length) == Constants.ifKeyword) {
         if(expression[Constants.ifKeyword.length] == Constants.parentheses[0] && expression[expression.length - 1] == Constants.parentheses[1]) {
-            let condition = expression.slice(Constants.ifKeyword.length + 1, expression.length - 1);
-            let operator = null;
-            let sides = [];
-            
-            ifCondition = false;
-            inIfStatement = true;
-            inStatement = true;
+            ifCondition = checkStatement(expression, options);
 
-           /*  for(let op of Constants.logicOperators) {
-                if(condition.indexOf(op) != -1) {
+            if(ifCondition && !ifOrElseIfTrue)
+                ifOrElseIfTrue = true;
 
-                }
-            } */
-            
-            for(let op of Constants.ifOperators) {
-                if(condition.indexOf(op) != -1) {
-                    operator = op;
-                    break;
-                }
-            }
+            inStatement = inIfStatement = true;
 
-            if(!operator) {
-                sides.push(parseSide(condition, options));
-
-                if(sides[0] != false && sides[0] != true) {
-                    operator = '!=';
-                    sides.push(null);
-                } else {
-                    operator = '==';
-                    sides.push(true);
-                }
-            } else {
-                sides.push(parseSide(condition.slice(0, condition.indexOf(operator)), options));
-                sides.push(parseSide(condition.slice(condition.indexOf(operator) + operator.length, condition.length), options));
-            }
-
-            switch(operator) {
-                case '==':
-                    if(sides[0] == sides[1]) 
-                        ifCondition = true;
-                    else if(Array.isArray(sides[0]) && Array.isArray(sides[1])) {
-                        if(compareArrays(sides[0], sides[1]))
-                            ifCondition = true;
-                    }
-                    break;
-                case '!=':
-                    if(Array.isArray(sides[0]) && Array.isArray(sides[1])) {
-                        if(!compareArrays(sides[0], sides[1]))
-                            ifCondition = true;
-                    }
-                    else if(sides[0] != sides[1])
-                        ifCondition = true;
-                    break;
-                case '===':
-                    if(sides[0] === sides[1])
-                        ifCondition = true;
-                    else if(Array.isArray(sides[0]) && Array.isArray(sides[1])) {
-                        if(compareArrays(sides[0], sides[1]))
-                            ifCondition = true;
-                    }
-                    break;
-                case '>':
-                    if(sides[0] > sides[1])
-                        ifCondition = true;
-                    break;
-                case '<':
-                    if(sides[0] < sides[1])
-                        ifCondition = true;
-                    break;
-                case '>=':
-                    if(sides[0] >= sides[1])
-                        ifCondition = true;
-                    break;
-                case '<=':
-                    if(sides[0] <= sides[1])
-                        ifCondition = true;
-                    break;
-            }
+            chainLength = 0;
 
             return true;
         }
@@ -194,12 +216,17 @@ module.exports.checkForIfStatement = (expression, options) => {
 
 module.exports.enterElseStatement = () => {
     inElse = true;
-    inIfStatement = false;
+    inIfStatement = true;
     chainLength = 0;
     parsedContent = '';
-
-
 };
+
+function enterElseIfStatement() {
+    inIfStatement = true;
+    inElseIf = true;
+    chainLength = 0;
+    parsedContent = '';
+}
 
 function findVar(name, options) {
     for(let key in options) {
@@ -316,7 +343,7 @@ function endIfStatement() {
 function endElseStatement() {
     let parsedHTML = '';
 
-    if(!ifCondition)
+    if(!ifOrElseIfTrue)
         parsedHTML = parsedContent;
 
     module.exports.reset();
@@ -324,10 +351,23 @@ function endElseStatement() {
     return parsedHTML;
 }
 
+function endElseIfStatement() {
+    let parsedHTML = '';
+    
+    if(!ifCondition && elseIfCondition)
+        parsedHTML = parsedContent;
+    
+    //module.exports.reset();
+    parsedContent = '';
+    inElseIf = false;
+    
+    return parsedHTML;
+}
+
 module.exports.reset = () => {
     iterator = '';
     iteratedArray = [];
-    inForInLoop = inStatement = inIfStatement = ifCondition = false;
+    inForInLoop = inStatement = inIfStatement = inElseIf = ifOrElseIfTrue = ifCondition = false;
     parsedContent = '';
     chainLength = 0;
 };
@@ -344,12 +384,15 @@ module.exports.checkIfOver = () => {
 
 module.exports.incrementChainLength = () => chainLength++;
 module.exports.decrementChainLength = () => chainLength--;
+module.exports.chainLength = () => chainLength;
 
 module.exports.endStatement = (options) => {
     if(inForInLoop)
         return endForInLoop(options);
-    else if(inIfStatement)
+    else if(inIfStatement && !inElseIf && !inElse)
         return endIfStatement();
+    else if(inElseIf)
+        return endElseIfStatement();
     else if(inElse)
         return endElseStatement();
 };
