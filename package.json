@@ -1,6 +1,6 @@
 {
   "name": "shoko",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "a templating engine",
   "main": "index.js",
   "scripts": {
