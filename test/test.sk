@@ -1,31 +1,20 @@
-doctype html;
+doctype
 html {
     head {
         title {
             'Shoko'
         }
-        
-        link[rel="stylesheet", href="style.css"];
-        link[href="https://fonts.googleapis.com/icon?family=Material+Icons", rel="stylesheet"];
     }
     
     body {
         if(@error@) {
-            div.alert-container.alert-error {
-                'Error - invalid email or password!'
-                i.material-icons.cancel-btn {
-                    'cancel'
-                }
+            h1 {
+                'Error'
             }
         } else {
-            div.alert-container.alert-success {
-                'You have successfully signed in!'
-                i.material-icons.cancel-btn {
-                    'cancel'
-                }
+            h1 {
+                'No Error'
             }
         }
-
-        script[src="signin.js"] {}
     }
 }

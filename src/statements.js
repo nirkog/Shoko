@@ -367,7 +367,7 @@ function endElseIfStatement() {
 module.exports.reset = () => {
     iterator = '';
     iteratedArray = [];
-    inForInLoop = inStatement = inIfStatement = inElseIf = ifOrElseIfTrue = ifCondition = false;
+    inForInLoop = inIfStatement = ifCondition = elseIfCondition = inStatement = inElse = inElseIf = false;
     parsedContent = '';
     chainLength = 0;
 };
