@@ -1,0 +1,189 @@
+body {
+    margin: 0;
+}
+.nav-wrapper {
+    background-color: hsl(0, 0%, 96%);
+    box-shadow:  0px 1px 10px 1px #333;
+    position: fixed;
+    width: 100%;
+    top: 0;
+}
+.nav {
+    width: 65%;
+    margin: auto;
+}
+.nav-list {
+    list-style-type: none;
+    display: inline-flex;
+    margin: 0;
+}
+.nav-list.pull-right {
+    float: right;
+}
+.nav-list li {
+    margin: 0;
+    padding: 1.25rem 1.6rem;
+}
+.nav-list li a {
+    color: black;
+    text-decoration: none;
+    font-weight: 100;
+    font-size: 2rem;
+    margin: 0;
+    padding: 0;
+}
+.nav-list li a:hover {
+    color: #555;
+}
+.wrapper {
+    width: 65%;
+    margin: auto;
+}
+.main-header {
+    color: #fafafa;
+    text-align: center;
+    padding-top: 12rem;
+    background-color: #2d2d2d;
+    padding-bottom: 10rem;
+    width: 100%;
+}
+.main-header h1 {
+    font-size: 8rem;
+    font-weight: 50;
+    margin-bottom: 0.5rem;
+}
+.main-header .button {
+    color: #fafafa;
+    font-size: 2.25rem;
+    font-weight: 100;
+    font-family: 'Raleway';
+    border-radius: 7px;
+    padding: 0.75rem 2.5rem;
+    height: 100%;
+    border: 2px solid white;
+    text-transform: none;
+    margin: 0.75rem 2rem;
+}
+.main-header .button:hover {
+    color: #eee;
+    border-color: #ccc;
+}
+.features {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 3.5rem;
+    padding-bottom: 3rem;
+}
+.features .feature {
+    width: 30%;
+}
+.features .feature h5 {
+    font-weight: 500;
+    font-size: 2.75rem;
+    margin-bottom: 1rem;
+}
+.features .feature p {
+    font-size: 1.6rem;
+    overflow: hidden;
+}
+hr.sections-divider {
+    width: 50%;
+    margin: auto;
+    border-top-color: #2b2b2b;
+}
+.examples {
+    margin: 5rem 0 2.5rem 0;
+}
+.example {
+    margin: 2.5rem 0;
+}
+.example p {
+    font-size: 1.7rem;
+    margin-bottom: 0.25rem;
+}
+.example .code-container {
+    margin: 0;
+    margin-top: 1.25rem;
+    width: 48.25%;
+    text-align: center;
+    display: inline-block;
+}
+.example .code-container pre {
+    width: 100%;
+    margin-bottom: 0;
+}
+.example .code-container pre > code {
+    font-size: 1.5rem;
+    margin-top: 0;
+    text-align: left;
+}
+.example .code-container > .code-title {
+    margin-bottom: 0;
+    text-decoration: underline;
+}
+.examples .button-container {
+    text-align: center;
+    margin-top: 1rem;
+    margin-bottom: 4rem;
+}
+.examples .button {
+    color: #333;
+    font-size: 2.25rem;
+    font-weight: 100;
+    font-family: 'Raleway';
+    border-radius: 7px;
+    padding: 0.75rem 2.5rem;
+    height: 100%;
+    border: 1px solid #333;
+    text-transform: none;
+}
+.examples .button:hover {
+    color: #555;
+    border-color: #555;
+}
+.pull-left {
+    float: left;
+}
+.pull-right {
+    float: right;
+}
+footer {
+    padding: 1rem 0 1rem 2rem;
+    margin: auto;
+    margin-top: 5rem;
+    width: 75%;
+}
+footer .lists-wrapper {
+    display: flex;
+    justify-content: space-around;
+    width: 60%;
+    margin: auto;
+}
+footer .lists-wrapper ul {
+    list-style-type: none;
+}
+footer .lists-wrapper ul li:first-child {
+    font-weight: bold;
+    margin-bottom: 2rem;
+}
+footer .lists-wrapper ul li a {
+    color: #333;
+    text-decoration: none;
+}
+footer .lists-wrapper ul li a:hover {
+    color: #000;
+}
+footer .bottom-section {
+    margin-top: 1.5rem;
+    margin-bottom: 2rem;
+}
+footer .name {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 0;
+}
+footer .copyright {
+    font-size: 1.75rem;
+    margin-top: 0.25rem;
+    text-align: center;
+}

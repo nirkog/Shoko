@@ -4,10 +4,209 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+        <link rel="stylesheet" href="styles/index.css">
         
         <title>Shoko</title>
     </head>
     <body>
-        <h1>Shoko Templating Engine</h1>
+        <div class="nav-wrapper">
+            <div class="nav">
+                <ul class="nav-list">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Docs</a></li>
+                    <li><a href="#">Tutorial</a></li>
+                </ul>
+                <ul class="nav-list pull-right">
+                    <li><a href="https://github.com/nirkog/Shoko">Github</a></li>
+                    <li><a href="https://npmjs.com/package/shoko">Npm</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <header class="main-header">
+            <h1>Shoko</h1>
+            <h4>A blazing fast, dead simple templating engine.</h4>
+            <a class="button" href="#">Get Started</a>
+            <a class="button" href="#">Documentation</a>
+        </header>
+
+        <div class="wrapper">
+            <div class="features">
+                <div class="feature">
+                    <h5>Easy</h5>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Nulla eget felis diam. Vivamus est tortor, pharetra sollicitudin placerat ac, 
+                        tincidunt sed sapien. In quam dolor, dapibus id massa quis, facilisis gravida est. 
+                        Nunc eget leo in augue varius accumsan nec eget tortor.
+                    </p>
+                </div>
+                <div class="feature">
+                    <h5>Fast</h5>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Nulla eget felis diam. Vivamus est tortor, pharetra sollicitudin placerat ac, 
+                        tincidunt sed sapien. In quam dolor, dapibus id massa quis, facilisis gravida est. 
+                        Nunc eget leo in.
+                    </p>
+                </div>
+                <div class="feature">
+                    <h5>Something</h5>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Nulla eget felis diam. Vivamus est tortor, pharetra sollicitudin placerat ac, 
+                        tincidunt sed sapien. In quam dolor, dapibus id massa quis, facilisis gravida est. 
+                        Nunc.
+                    </p>
+                </div>
+            </div>
+
+            <hr class="sections-divider">
+
+            <div class="examples">
+                <div class="example" style="margin-bottom: 0;">
+                    <h4 class="title">Creating A Blank Page</h4>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Nulla eget felis diam. Vivamus est tortor, pharetra sollicitudin placerat ac, 
+                        tincidunt sed sapien. In quam dolor, dapibus id massa quis, facilisis gravida est, Nunc.
+                        Nulla eget felis diam. Vivamus est tortor, pharetra sollicitudin placerat ac, 
+                        tincidunt sed sapien. In quam dolor, dapibus id massa quis, facilisis gravida est. 
+                        Nunc.
+                    </p>
+                    <div class="code-container">
+                        <div class="code-wrapper pull-left"></div>
+                        <h5 class="code-title">Shoko</h5>
+                            <pre>
+                                <code style="padding-bottom: 3.5rem;">
+doctype html
+html {
+    head {
+        title {
+            'Shoko'
+        }
+    }
+    body {
+        h1 {
+            'Hello World!'
+        }
+    }
+}
+                            </code>
+                        </pre>
+                    </div>
+                    <div class="code-container pull-right">
+                        <h5 class="code-title">Compiled HTML5</h5>
+                        <pre style="float: right;">
+                            <code>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;
+            Shoko
+        &lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;h1&gt;
+            Hello World!
+        &lt;/h1&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+
+                            </code>
+                        </pre>
+                    </div>
+                </div>
+                <div class="example" style="margin-bottom: 0;">
+                    <h4 class="title">Using Variables</h4>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Nulla eget felis diam. Vivamus est tortor, pharetra sollicitudin placerat ac, 
+                        tincidunt sed sapien. In quam dolor, dapibus id massa quis, facilisis gravida est, Nunc.
+                        Nulla eget felis diam. Vivamus est tortor, pharetra sollicitudin placerat ac, 
+                        tincidunt sed sapien. In quam dolor, dapibus id massa quis, facilisis gravida est. 
+                        Nunc.
+                    </p>
+                    <div class="code-container">
+                        <div class="code-wrapper pull-left"></div>
+                        <h5 class="code-title">Shoko</h5>
+                            <pre>
+                                <code style="padding-bottom: 3.5rem;">
+    doctype html
+    html {
+        head {
+            title {
+                'Shoko'
+            }
+        }
+        body {
+            h1 {
+                'Hello World!'
+            }
+        }
+    }
+                                </code>
+                            </pre>
+                        </div>
+                        <div class="code-container pull-right">
+                            <h5 class="code-title">Compiled HTML5</h5>
+                            <pre style="float: right;">
+                                <code>
+    &lt;!DOCTYPE html&gt;
+    &lt;html&gt;
+        &lt;head&gt;
+            &lt;title&gt;
+                Shoko
+            &lt;/title&gt;
+        &lt;/head&gt;
+        &lt;body&gt;
+            &lt;h1&gt;
+                Hello World!
+            &lt;/h1&gt;
+        &lt;/body&gt;
+    &lt;/html&gt;
+    
+                                </code>
+                            </pre>
+                        </div>
+                        <div class="button-container">
+                            <a href="#" class="button">Get Started</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="sections-divider" style="width: 60%">
+
+        <footer>
+            <div class="lists-wrapper">
+                <ul>
+                    <li>Docs</li>
+                    <li><a href="#">Tutorial</a></li>
+                    <li><a href="#">Get Started</a></li>
+                    <li><a href="#">Basic Page</a></li>
+                </ul>
+                <ul>
+                    <li>Lorem</li>
+                    <li><a href="#">Ipsum</a></li>
+                    <li><a href="#">Dolor</a></li>
+                    <li><a href="#">Sit</a></li>
+                </ul>
+                <ul>
+                    <li>Amet</li>
+                    <li><a href="#">consectetur</a></li>
+                    <li><a href="#">adipiscing</a></li>
+                    <li><a href="#">elit</a></li>
+                </ul>
+            </div>
+            <div class="bottom-section">
+                <div class="name">Shoko</div>
+                <div class="copyright">&copy; Nir Kogman 2017-2017</div>
+            </div>
+        </footer>
     </body>
 </html>
