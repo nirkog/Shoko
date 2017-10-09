@@ -7,14 +7,8 @@ html {
     }
     
     body {
-        if(@error@) {
-            h1 {
-                'Error'
-            }
-        } else {
-            h1 {
-                'No Error'
-            }
+        h1 {
+            'Error'
         }
     }
 }
