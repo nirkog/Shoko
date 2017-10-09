@@ -27,9 +27,6 @@ function render(input, options={}, defaultDoctype=true) {
                 if(Mixin.inMixin()) {
                     Mixin.addToParsedMixin(Expressions.handleOpeningChar(options));
                     Mixin.addToChainLength(1);
-                } else if(Statements.inStatement() && !Statements.checkIfOver()) {
-                    Statements.incrementChainLength();
-                    Statements.addToContent(Expressions.handleOpeningChar(options));
                 } else if(Comments.inComment()) {
                     Comments.addToChain(char);
                 } else {
@@ -39,19 +36,11 @@ function render(input, options={}, defaultDoctype=true) {
                 Expressions.setExpression('');
             }
         } else if(char == Constants.expressionClosingChar) {
-            if(!Mixin.inMixin() && !Statements.inStatement()) {
+            if(!Mixin.inMixin()) {
                 if(Comments.inComment())
                     Comments.addToChain(char); 
                 else
                     parsedHTML += Expressions.handleClosingChar();
-            } else if(Statements.inStatement()) {
-                Statements.decrementChainLength();
-
-                if(Statements.checkIfOver()) {
-                    parsedHTML += Statements.endStatement(options);
-                } else {
-                    Statements.addToContent(Expressions.handleClosingChar());
-                }
             } else {
                 Mixin.addToChainLength(-1);
 
@@ -83,8 +72,6 @@ function render(input, options={}, defaultDoctype=true) {
                 Mixin.addToParsedMixin(Strings.handle(char));
             } else if(Mixin.inMixinCall()) {
                 Mixin.addToCallChain(Strings.handle(char));
-            } else if(Statements.inStatement()) {
-                Statements.addToContent(Strings.handle(char));
             } else if(Comments.inComment()) {
                 Comments.addToChain(char);
             } else {
@@ -105,11 +92,7 @@ function render(input, options={}, defaultDoctype=true) {
                         Strings.setEscaped(false);
                     }
                 } else {
-                    if(!Statements.inForInLoop()) {
-                        Strings.addToChain(Vars.handle(Expressions.getChain(), options, Expressions.inAttr()));
-                    } else {
-                        Strings.addToChain(char);
-                    }
+                    Strings.addToChain(Vars.handle(Expressions.getChain(), options, Expressions.inAttr()));
                 }
             } else if(Vars.inVar()) {
                 if(Strings.isEscaped())
@@ -130,8 +113,6 @@ function render(input, options={}, defaultDoctype=true) {
             }
             else if(Mixin.inMixinCall()) {
                 Mixin.addToCallChain(Vars.handle(Expressions.getChain(), options, Expressions.inAttr(), ''));
-            } else if(Statements.inStatement()) {
-                Vars.handle(Expressions.getChain(), options, Expressions.inAttr(), data[i + 1]);
             } else if(Comments.inComment()) {
                 Comments.addToChain(char);
             } else {
@@ -193,7 +174,7 @@ function reset() {
     Mixin.reset();
     Strings.reset();
     Vars.reset();
-    Statements.reset(); 
+    //Statements.reset(); 
 }
 
 function renderFile(filePath, options, fn) {

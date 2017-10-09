@@ -110,29 +110,6 @@ function shorthandProperties() {
 module.exports.getTabs = getTabs;
 
 module.exports.handleOpeningChar = options => {
-    if(Statements.checkForForInLoop(expression, options) || Statements.checkForIfStatement(expression, options)) {
-        attr = '';
-        expression = '';
-
-        return '';
-    } else if(Statements.inIfStatement() && Statements.checkIfOver()) {
-        if(expression == Constants.elseKeyword) {
-            attr = '';
-            expression = '';
-
-            Statements.enterElseStatement();
-
-            return '';
-        } else if(Statements.checkForElseIfStatement(expression, options)) {
-            attr = '';
-            expression = '';
-
-            return '';
-        } else {
-            Statements.reset();
-        }
-    }
-
     let element = shorthandProperties();
 
     chain.push(element ? element.tag : expression);
@@ -223,10 +200,7 @@ module.exports.handleSelfClosingExpression = _ => {
 };
 
 module.exports.handleOpeningAttr = _ => {
-    if(!Statements.quickIfStatementCheck(expression))
-        inAttr = true;
-    else
-        expression += Constants.attrOpeningChar;
+    inAttr = true;
 };
 
 module.exports.handleClosingAtrr = _ => {

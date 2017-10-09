@@ -135,8 +135,6 @@ module.exports.getData = (raw, dirPath, defaultDoctype) => {
 
     data = data.join('');
 
-    let forStatementPositions = statements.checkForForStatements(data);
-
     let inString = inComment = escaped = false;
 
     let stringPositions = [];
@@ -156,26 +154,12 @@ module.exports.getData = (raw, dirPath, defaultDoctype) => {
         } else if(data[i] == Constants.commentChar && !inString) {
             inComment = !inComment;
         } else if(data[i] == ' ') {
-            let inForStatement = false;
-
-            forStatementPositions.forEach((position) => {
-                if(i >= position[0] && i < position[1]) {
-                    inForStatement = true;
-                }
-            });
             
-            if(!inString && !inComment && !inForStatement) {
+            if(!inString && !inComment) {
                 data = data.substr(0, i) + data.substr(i + 1);
                 i--;
 
                 stringPositions.forEach((position) => {
-                    if(i < position[1]) {
-                        position[0]--;
-                        position[1]--;
-                    }
-                });
-
-                forStatementPositions.forEach((position) => {
                     if(i < position[1]) {
                         position[0]--;
                         position[1]--;

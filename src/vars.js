@@ -17,13 +17,6 @@ module.exports.handle = (htmlChain, options, inAttr, nextChar='') => {
     inVar = !inVar;
     let parsedHTML = '';
     let found = '';
-
-    if(Statements.inForInLoop()) {
-        chain = '';
-
-        Statements.addToContent(chain + Constants.varChar);
-        return '';
-    }
     
     if(!inVar) {
         if(nextChar == Constants.varAssignmentChar) {
@@ -107,11 +100,6 @@ module.exports.handle = (htmlChain, options, inAttr, nextChar='') => {
         }
 
         chain = '';
-    }
-
-    if(Statements.inIfStatement() && !Strings.inString()) {
-        Statements.addToContent(parsedHTML);
-        return '';
     }
     
     return parsedHTML;
