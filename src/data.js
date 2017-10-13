@@ -1,5 +1,7 @@
 const Constants = require('./constants');
-const statements = require('./statements');
+const Statements = require('./statements');
+const Strings = require('./strings');
+const Comments = require('./comments');
 
 const fs = require('fs');
 const path = require('path');
@@ -80,99 +82,49 @@ function handleDoctype(line) {
 }
 
 //Not finished
-function handleEmptyLines(data) {
+/*function handleEmptyLines(data) {
     data.forEach((line) => {
         let noSpaces = line.split(' ').join('');
         if(noSpaces == '\n' || noSpaces == '\r\n' || noSpaces === '') {
             //Detects empty lines
         }
     });
+}*/
+
+function spaceProtected(i, protectedPositions) {
+    for(let positions of protectedPositions) {
+        for(let position of positions) {
+            if(i > position[0] && i < position[1]) {
+                return true;
+            }
+        }
+    }
 }
 
-module.exports.getData = (raw, dirPath, defaultDoctype) => {
-    let data = raw.split('\r\n');
-    
-    let doctype = handleDoctype(data[0]);
-
-    if(doctype && doctype != -1) {
-        /*if(data[0].length === Constants.doctypeKeyword.length)
-            console.log(`Using default doctype: ${Constants.doctypes['html']}`.yellow);
-        else
-            console.log(`Doctype: ${doctype}`.yellow);*/
-
-        doctype += '\n';
-        data.splice(0, 1);
-    } else if(doctype == -1) {
-        if(data[0].indexOf(';') == -1) {
-            throw new Error(`${data[0].substr(Constants.doctypeKeyword.length + 1, data[0].length)} is not a supported doctype.`);
-
-            doctype = '';
-            data.splice(0, 1);
-        } else {
-            //Handle single line doctype statements
-
-            let expression = data[0].substring(0, data[0].indexOf(';'))
-            let type = data[0].substring(Constants.doctypeKeyword.length + 1, data[0].indexOf(';'));
-            
-            if(type == ';') {
-                doctype = Constants.doctypes['html'] + '\n';
-            } else if(type in Constants.doctypes) {
-                doctype = Constants.doctypes[type] + '\n';
-            } else {
-                throw new Error(`${type} is not a supported doctype.`);
-            }
-
-            data[0] = data[0].slice(data[0].indexOf(';') + 1, data[0].length);
-        }
-    } else {
-        if(defaultDoctype)
-            doctype = Constants.doctypes['html'] + '\n';
-        else
-            doctype = '';
-    }
-
-    handleEmptyLines(data);
-
-    data = data.join('');
-
-    let inString = inComment = escaped = false;
-
-    let stringPositions = [];
-    let stringCount = 0;
-
+function removeSpaces(data, protectedPositions) {
     for(let i = 0; i < data.length; i++) {
-        if((data[i] == '\'' || data[i] == '"') && !escaped) {
-            inString = !inString;
-
-            if(inString) {
-                stringPositions.push([i]);
-            } else {
-                stringPositions[stringCount].push(i);
-
-                stringCount++;
-            }
-        } else if(data[i] == Constants.commentChar && !inString) {
-            inComment = !inComment;
-        } else if(data[i] == ' ') {
-            
-            if(!inString && !inComment) {
-                data = data.substr(0, i) + data.substr(i + 1);
+        if(data[i] == ' ') {
+            if(!spaceProtected(i, protectedPositions)) {
+                data = data.slice(0, i) + data.slice(i + 1, data.length);
                 i--;
 
-                stringPositions.forEach((position) => {
-                    if(i < position[1]) {
-                        position[0]--;
-                        position[1]--;
-                    }
+                protectedPositions.forEach((positions) => {
+                    positions.forEach((position) => {
+
+                        if(position[0] > i) {
+                            position[0]--;
+                            position[1]--;
+                        }
+                    });
                 });
             }
-        } else if(data[i] == Constants.escapeChar) {
-            escaped = true;
-        } else {
-            if(escaped) escaped = false;
         }
     }
 
+    return data;
+}
+
+function handleImports(data) {
     let indexesToClean = [];
     while(data.indexOf(Constants.importKeyword) != -1) {
         let startIndex = data.indexOf(Constants.importKeyword);
@@ -226,7 +178,61 @@ module.exports.getData = (raw, dirPath, defaultDoctype) => {
         data = data.replace(data[index], '');
     });
 
-    //console.log(data);
+    return data;
+}
+
+module.exports.getData = (raw, dirPath, defaultDoctype) => {
+    let data = raw.split('\r\n');
+    
+    let doctype = handleDoctype(data[0]);
+
+    if(doctype && doctype != -1) {
+        doctype += '\n';
+        data.splice(0, 1);
+    } else if(doctype == -1) {
+        if(data[0].indexOf(';') == -1) {
+            throw new Error(`${data[0].substr(Constants.doctypeKeyword.length + 1, data[0].length)} is not a supported doctype.`);
+
+            doctype = '';
+            data.splice(0, 1);
+        } else {
+            //Handle single line doctype statements
+
+            let expression = data[0].substring(0, data[0].indexOf(';'))
+            let type = data[0].substring(Constants.doctypeKeyword.length + 1, data[0].indexOf(';'));
+            
+            if(type == ';') {
+                doctype = Constants.doctypes['html'] + '\n';
+            } else if(type in Constants.doctypes) {
+                doctype = Constants.doctypes[type] + '\n';
+            } else {
+                throw new Error(`${type} is not a supported doctype.`);
+            }
+
+            data[0] = data[0].slice(data[0].indexOf(';') + 1, data[0].length);
+        }
+    } else {
+        if(defaultDoctype)
+            doctype = Constants.doctypes['html'] + '\n';
+        else
+            doctype = '';
+    }
+
+    //handleEmptyLines(data);
+
+    data = data.join('');
+
+    let stringPositions = Strings.getPositions(data);
+    let commentPositions = Comments.getPositions(data, stringPositions);
+    let forPositions = Statements.findForLoops(data, stringPositions);
+    let protectedPositions = [stringPositions, commentPositions, forPositions];
+
+    let inString = inComment = escaped = false;
+
+    let stringCount = 0;
+
+    data = removeSpaces(data, protectedPositions);
+    data = handleImports(data);
 
     return [data, doctype];
 };

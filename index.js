@@ -21,6 +21,7 @@ function render(input, options={}, defaultDoctype=true) {
 
     for(let i = 0; i < data.length; i++) {
         let char = data[i];
+        let addedContent = '';
 
         if(char == Constants.expressionOpeningChar) {
             if(!Mixin.checkForMixin(Expressions.getExpression())) {
@@ -30,17 +31,38 @@ function render(input, options={}, defaultDoctype=true) {
                 } else if(Comments.inComment()) {
                     Comments.addToChain(char);
                 } else {
-                    parsedHTML += Expressions.handleOpeningChar(options);
+                    if(Statements.inForLoop()) {
+                        Statements.scopeBalance++;
+
+                        if(Statements.scopeBalance == 1) {
+                            Expressions.setExpression('');
+                            continue;
+                        }
+                    }
+                    
+                    addedContent = Expressions.handleOpeningChar(options);
                 }
             } else {
                 Expressions.setExpression('');
             }
         } else if(char == Constants.expressionClosingChar) {
             if(!Mixin.inMixin()) {
-                if(Comments.inComment())
-                    Comments.addToChain(char); 
-                else
-                    parsedHTML += Expressions.handleClosingChar();
+                let skipExpression = false;
+                if(Statements.inForLoop()) {
+                    Statements.scopeBalance--;
+
+                    if(Statements.scopeBalance == 0) {
+                        addedContent = Statements.exitForLoop();
+                        skipExpression = true;
+                    }
+                }
+
+                if(!skipExpression) {
+                    if(Comments.inComment())
+                        Comments.addToChain(char); 
+                    else
+                        addedContent = Expressions.handleClosingChar();
+                }
             } else {
                 Mixin.addToChainLength(-1);
 
@@ -62,7 +84,7 @@ function render(input, options={}, defaultDoctype=true) {
             else if(Comments.inComment())
                 Comments.addToChain(char);
             else
-                parsedHTML += Expressions.handleSelfClosingExpression();
+                addedContent = Expressions.handleSelfClosingExpression();
         } else if((char == '\'' || char == '"') && !Expressions.inAttr() && !Comments.inComment()) {
             if(Vars.inVar()) {
                 throw new Error('var names cannot include strings');
@@ -79,18 +101,21 @@ function render(input, options={}, defaultDoctype=true) {
                     Strings.addToChain(char); 
                     Strings.setEscaped(false);
                 } else {
-                    parsedHTML += Strings.handle(char);
+                    addedContent = Strings.handle(char);
                 }
             }
         } else if(Strings.inString()) {
             if(char == Constants.varChar) {
                 if(Strings.isEscaped()) {
-                    Strings.addToChain(char);
                     Vars.setInVar(!Vars.inVar());
 
                     if(!Vars.inVar()) {
                         Strings.setEscaped(false);
+                    } else if(Statements.inForLoop()) {
+                        Strings.addToChain('\\');
                     }
+
+                    Strings.addToChain(char);
                 } else {
                     Strings.addToChain(Vars.handle(Expressions.getChain(), options, Expressions.inAttr()));
                 }
@@ -116,10 +141,7 @@ function render(input, options={}, defaultDoctype=true) {
             } else if(Comments.inComment()) {
                 Comments.addToChain(char);
             } else {
-                if(i == data.length - 1)
-                    parsedHTML += Vars.handle(Expressions.getChain(), options, Expressions.inAttr());
-                else
-                    parsedHTML += Vars.handle(Expressions.getChain(), options, Expressions.inAttr(), data[i + 1], []);
+                addedContent = Vars.handle(Expressions.getChain(), options, Expressions.inAttr(), i == data.length - 1 ? null : data[data.length + 1], []);
             }
         } else if(Vars.inVar()) {
             if(char == Constants.endOfVarAssignmentChar) {
@@ -145,7 +167,7 @@ function render(input, options={}, defaultDoctype=true) {
             if(Mixin.inMixin())
                 Mixin.addToParsedMixin(Comments.handle());
             else
-                parsedHTML += Comments.handle();
+                addedContent = Comments.handle();
         } else if(Comments.inComment()) {
             Comments.addToChain(char);
         } else if(char == Constants.mixinChar) {
@@ -154,13 +176,21 @@ function render(input, options={}, defaultDoctype=true) {
             } else if(Comments.inComment()) {
                 Comments.addToChain(char);
             } else {
-                parsedHTML += Mixin.endMixinCall();
+                addedContent = Mixin.endMixinCall();
             }
         } else if(Mixin.inMixinCall()) {
             Mixin.addToCallChain(char);
         } else {
-            Expressions.setExpression(Expressions.getExpression() + char);           
+            if(char == Constants.parentheses[0])
+                Statements.checkForForLoop(data, i, options);
+
+            Expressions.setExpression(Expressions.getExpression() + char);
         }
+
+        if(!Statements.inForLoop())
+            parsedHTML += addedContent;
+        else
+            Statements.addToParsedContent(addedContent);
     }
 
     reset();
@@ -174,7 +204,7 @@ function reset() {
     Mixin.reset();
     Strings.reset();
     Vars.reset();
-    //Statements.reset(); 
+    Statements.reset(); 
 }
 
 function renderFile(filePath, options, fn) {

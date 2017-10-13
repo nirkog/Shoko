@@ -94,6 +94,13 @@ module.exports.handle = (htmlChain, options, inAttr, nextChar='') => {
                 }
             }
         }
+
+        if(Statements.inForLoop()) {
+            if(chain == Statements.getIterator()) {
+                found = true;
+                parsedHTML = Constants.varChar + Statements.getIterator() + Constants.varChar;
+            }
+        }
         
         if(!found) {
             throw new Error(chain + ' is undefined.');
@@ -143,4 +150,24 @@ module.exports.reset = () => {
     chain = valueChain = '';
     inVar = inAssignment = false;
     localVars = {};
+};
+
+module.exports.findVar = (varName, options) => {
+    for(let variable in options) {
+        if(options.hasOwnProperty(variable)) {
+            if(variable == varName) {
+                return options[varName];
+            }
+        }
+    }
+
+    for(let variable in localVars) {
+        if(localVars.hasOwnProperty(variable)) {
+            if(variable == varName) {
+                return localVars[varName];
+            }
+        }
+    }
+
+    return null;
 };
